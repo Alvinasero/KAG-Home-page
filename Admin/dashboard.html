@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | KAG Maridadi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f4f7f6; }
+        .sidebar { height: 100vh; background: #2c3e50; color: white; position: fixed; width: 250px; }
+        .main-content { margin-left: 250px; padding: 40px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar p-3">
+        <h3>KAG Admin</h3>
+        <hr>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="#" class="nav-link text-white">Sermons</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white">Gallery</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white text-danger" id="logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2>Upload Church Content</h2>
+        
+        <div class="card p-4 mt-4 shadow-sm">
+            <h4>Add New Sermon Video</h4>
+            <form id="uploadSermonForm">
+                <div class="mb-3">
+                    <label>Sermon Title</label>
+                    <input type="text" id="title" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Select MP4 Video</label>
+                    <input type="file" id="videoFile" class="form-control" accept="video/mp4" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload to Website</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000' : '';
+            
+        const API_BASE_URL = `${baseUrl}/api/admin`;
+        const sessionKey = localStorage.getItem('kag_admin_session');
+
+        // Security Check: Redirect to login if no session found
+        if (!sessionKey || sessionKey !== "SECRET_CHURCH_KEY_777") {
+            window.location.href = 'login.html';
+        }
+
+        // Handle Sermon Upload
+        document.getElementById('uploadSermonForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const videoFile = document.getElementById('videoFile').files[0];
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('video', videoFile);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert("Sermon uploaded and live on frontend!");
+                    e.target.reset();
+                } else {
+                    alert("Upload failed. Make sure the backend is running.");
+                }
+            } catch (err) {
+                console.error("Upload error:", err);
+                alert("Could not connect to backend server.");
+            }
+        };
+
+        // Logout Function
+        document.getElementById('logout').addEventListener('click', () => {
+            localStorage.removeItem('kag_admin_session');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

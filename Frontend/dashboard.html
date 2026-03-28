@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | KAG Maridadi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/Frontend/CSS/style.css">
+
+        <a href="index.html" class="text-white text-decoration-none mx-2 small">Home</a>
+                <a href="sermons.html" class="text-white text-decoration-none mx-2 small">Sermons</a>
+                <a href="events.html" class="text-white text-decoration-none mx-2 small">Events</a>
+                <a href="blog.html" class="text-white text-decoration-none mx-2 small">News</a>
+                <a href="contact.html" class="text-white text-decoration-none mx-2 small">Contact</a>
+    <style>
+        :root { --navy: #0a192f; --gold: #d4af37; }
+        body { background-color: #f4f7f6; font-family: 'Inter', sans-serif; }
+        .sidebar { min-height: 100vh; background: var(--navy); color: white; transition: 0.3s; }
+        .nav-link { color: rgba(255,255,255,0.7); transition: 0.3s; border-radius: 5px; margin-bottom: 5px; }
+        .nav-link:hover, .nav-link.active { background: var(--gold); color: var(--navy) !important; font-weight: bold; }
+        .stat-card { border: none; border-radius: 15px; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .admin-header { background: white; padding: 15px 30px; border-bottom: 1px solid #ddd; }
+        #content-section { padding: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
+            <h4 class="text-gold fw-bold mb-4 px-3">KAG ADMIN</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('stats')"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('sermons')"><i class="fas fa-microphone me-2"></i> Sermons</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('events')"><i class="fas fa-calendar-alt me-2"></i> Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('blog')"><i class="fas fa-newspaper me-2"></i> Blog/News</a></li>
+                <hr class="text-white-50">
+                <li class="nav-item"><a class="nav-link text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 p-0">
+            <div class="admin-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Welcome, <span id="adminName" class="fw-bold text-navy">Pastor</span></h5>
+                <a href="index.html" class="btn btn-sm btn-outline-secondary">View Website</a>
+            </div>
+
+            <div id="content-section">
+
+                    <div id="section-messages" style="display:none;">
+    <h3 class="mb-4 text-navy fw-bold">Communication Inbox</h3>
+    
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" onclick="loadAdminPrayers()">Prayer Requests</button>
+        </li>
+        <li class="nav-item ms-2">
+            <button class="nav-link" onclick="loadAdminMessages()">General Inquiries</button>
+        </li>
+    </ul>
+
+    <div class="card border-0 shadow-sm p-3">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="inboxTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadAdminPrayers() {
+    const res = await fetch('/api/admin/prayers');
+    const prayers = await res.json();
+    const tbody = document.getElementById('inboxTableBody');
+    tbody.innerHTML = '';
+
+    prayers.forEach(p => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                <td><strong>${p.member_name}</strong><br><small>${p.phone_number}</small></td>
+                <td><span class="badge bg-info mb-1">${p.request_type}</span><br>${p.message}</td>
+                <td><span class="badge ${p.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${p.status}</span></td>
+                <td>
+                    ${p.status === 'Pending' ? `<button onclick="markPrayed(${p.id})" class="btn btn-sm btn-outline-success">Mark Prayed</button>` : '✅'}
+                </td>
+            </tr>`;
+    });
+}
+
+async function markPrayed(id) {
+    await fetch(`/api/admin/prayers/${id}`, { method: 'PUT' });
+    loadAdminPrayers();
+}
+</script>
+
+
+
+
+                <div id="section-stats">
+                    <h3 class="mb-4">Dashboard Overview</h3>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card stat-card bg-primary text-white p-4">
+                                <h5>Total Sermons</h5>
+                                <h2 id="count-sermons">0</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stat-card bg-success text-white p-4">
+                                <h5>Active Events</h5>
+                                <h2 id="count-events">0</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stat-card bg-warning text-dark p-4">
+                                <h5>Pending Messages</h5>
+                                <h2 id="count-messages">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="section-sermons" style="display:none;">
+                    <h3>Upload New Sermon</h3>
+                    <div class="card p-4 border-0 shadow-sm mt-3">
+                        <form id="sermonForm">
+                            <div class="mb-3">
+                                <label class="form-label">Sermon Title</label>
+                                <input type="text" id="sTitle" class="form-control" placeholder="e.g. Walking in Grace" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Speaker</label>
+                                    <input type="text" id="sSpeaker" class="form-control" placeholder="Rev. John Doe" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select id="sCategory" class="form-select">
+                                        <option>Faith</option><option>Worship</option><option>Leadership</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Select Video/Audio File</label>
+                                <input type="file" id="sFile" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-success px-4">Publish Sermon</button>
+                        </form>
+                    </div>
+                </div>
+
+                </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // 1. Security Check: Redirect if not Admin
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('kag_token');
+        const role = localStorage.getItem('kag_role');
+        if (!token || role !== 'Admin') {
+            window.location.href = 'login.html';
+        }
+    });
+
+    // 2. Section Toggler
+    function showSection(sectionId) {
+        document.getElementById('section-stats').style.display = 'none';
+        document.getElementById('section-sermons').style.display = 'none';
+        // Add other sections here...
+        document.getElementById('section-' + sectionId).style.display = 'block';
+    }
+
+    // 3. Sermon Upload Handler
+    document.getElementById('sermonForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('title', document.getElementById('sTitle').value);
+        formData.append('speaker', document.getElementById('sSpeaker').value);
+        formData.append('sermonFile', document.getElementById('sFile').files[0]);
+
+        const response = await fetch('/api/admin/sermons', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('kag_token') },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Sermon uploaded successfully!');
+            location.reload();
+        } else {
+            alert('Upload failed. Check server logs.');
+        }
+    });
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+</body>
+</html>

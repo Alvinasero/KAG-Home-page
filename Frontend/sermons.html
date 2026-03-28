@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sermons | KAG Maridadi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root { --navy: #0a192f; --gold: #d4af37; }
+        .bg-navy { background-color: var(--navy); }
+        .text-gold { color: var(--gold); }
+        .sermon-card { 
+            transition: 0.3s; 
+            border: none; 
+            border-bottom: 4px solid var(--gold); 
+        }
+        .sermon-card:hover { transform: translateY(-5px); shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-gold { background-color: var(--gold); color: white; border: none; }
+        .btn-gold:hover { background-color: #b8962e; color: white; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-gold" href="index.html">KAG MARIDADI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="sermons.html">Sermons</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="py-5 bg-navy text-white text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Word & <span class="text-gold">Revelation</span></h1>
+            <p class="lead">Feeding your spirit with the undiluted Word of God.</p>
+        </div>
+    </header>
+
+    <div class="container mt-n4">
+        <div class="card shadow-sm p-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by topic or speaker...">
+                </div>
+                <div class="col-md-4">
+                    <select id="filterTopic" class="form-select">
+                        <option value="">All Topics</option>
+                        <option value="Faith">Faith</option>
+                        <option value="Worship">Worship</option>
+                        <option value="Leadership">Leadership</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-gold w-100" onclick="loadSermons()">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4" id="sermonContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-warning" role="status"></div>
+                    <p>Fetching latest sermons...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-4 bg-navy text-white text-center">
+        <div class="mb-2">
+            <a href="index.html" class="text-white text-decoration-none mx-2 small">Home</a>
+            <a href="sermons.html" class="text-white text-decoration-none mx-2 small">Sermons</a>
+            <a href="events.html" class="text-white text-decoration-none mx-2 small">Events</a>
+            <a href="contact.html" class="text-white text-decoration-none mx-2 small">Contact</a>
+        </div>
+        <p>&copy; 2026 KAG Maridadi Web System</p>
+    </footer>
+
+    <script>
+       async function loadSermons() {
+    const container = document.getElementById('sermonContainer');
+    
+    try {
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000' : '';
+
+        const response = await fetch(`${baseUrl}/api/sermons`);
+        const sermons = await response.json();
+
+        // DEBUG: This shows you exactly what the DB is sending in your browser console (F12)
+        console.log("Raw Data from Backend:");
+        console.table(sermons); 
+
+        container.innerHTML = ''; 
+
+        if (!sermons || sermons.length === 0) {
+            container.innerHTML = '<div class="col-12 text-center text-muted">No sermons found in the archive.</div>';
+            return;
+        }
+
+        sermons.forEach(sermon => {
+            // Use the videoUrl property from the backend
+            const videoPath = sermon.videoUrl ? `${baseUrl}${sermon.videoUrl}` : '';
+
+            container.innerHTML += `
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="ratio ratio-16x9 bg-dark rounded-top">
+                            <video controls preload="metadata">
+                                <source src="${videoPath}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="fw-bold text-navy">${sermon.title || 'Untitled Message'}</h5>
+                            <p class="text-muted small mb-0">By ${sermon.speaker || 'KAG Maridadi'}</p>
+                            <hr>
+                            <a href="${videoPath}" download class="btn btn-sm btn-outline-dark w-100">
+                                <i class="fas fa-download me-1"></i> Offline Access
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        container.innerHTML = `<div class="alert alert-danger w-100">Connection error: ${error.message}</div>`;
+    }
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', loadSermons);
+    </script>
+</body>
+</html>

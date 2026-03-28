@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | KAG Maridadi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <link rel="stylesheet" href="/Frontend/CSS/style.css">
+    <style>
+        :root { --navy: #0a192f; --gold: #d4af37; }
+        .bg-navy { background-color: var(--navy); }
+        .text-gold { color: var(--gold); }
+        .gallery-item { cursor: pointer; transition: 0.4s; position: relative; overflow: hidden; border-radius: 10px; height: 250px; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .gallery-item:hover img { transform: scale(1.1); filter: brightness(70%); }
+        .gallery-overlay { position: absolute; bottom: -100%; left: 0; width: 100%; padding: 15px; background: rgba(10, 25, 47, 0.8); color: var(--gold); transition: 0.4s; }
+        .gallery-item:hover .gallery-overlay { bottom: 0; }
+        .modal-content { background: transparent; border: none; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-gold" href="index.html">KAG MARIDADI</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="gallery.html">Gallery</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="py-5 bg-navy text-white text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Our <span class="text-gold">Moments</span></h1>
+            <p>Capturing the glory and joy of worship at KAG Maridadi.</p>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-center mb-5 gap-2">
+            <button class="btn btn-outline-dark filter-btn active" onclick="filterGallery('All', this)">All</button>
+            <button class="btn btn-outline-dark filter-btn" onclick="filterGallery('Worship', this)">Worship</button>
+            <button class="btn btn-outline-dark filter-btn" onclick="filterGallery('Outreach', this)">Outreach</button>
+            <button class="btn btn-outline-dark filter-btn" onclick="filterGallery('Youth', this)">Youth</button>
+        </div>
+
+        <div class="row g-4" id="galleryGrid">
+            <!-- Images will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="lightboxModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <img src="" id="lightboxImg" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openLightbox(src) {
+            const modalImg = document.getElementById('lightboxImg');
+            if(modalImg) {
+                modalImg.src = src;
+                const myModal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+                myModal.show();
+            }
+        }
+
+        // 1. Fetch and Display Gallery Items
+        async function loadGallery(category = 'All') {
+            const container = document.getElementById('galleryGrid');
+            container.innerHTML = '<div class="text-center w-100"><div class="spinner-border text-warning"></div></div>';
+
+            try {
+                // Fetch with query param
+                const response = await fetch(`/api/gallery?category=${category}`);
+                const images = await response.json();
+
+                container.innerHTML = '';
+
+                if (images.length === 0) {
+                    container.innerHTML = '<p class="text-center w-100 text-muted">No images found in this category.</p>';
+                    return;
+                }
+
+                images.forEach(img => {
+                    // Fallback if image_path is external or local
+                    const imgSrc = img.image_path.startsWith('http') ? img.image_path : `/uploads/${img.image_path}`;
+                    
+                    container.innerHTML += `
+                        <div class="col-md-4 animate-fade">
+                            <div class="gallery-item shadow-sm" onclick="openLightbox('${imgSrc}')">
+                                <img src="${imgSrc}" alt="${img.caption || 'Gallery Image'}">
+                                <div class="gallery-overlay small">${img.caption || img.album_name}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error loading gallery:", error);
+                container.innerHTML = '<p class="text-center text-danger w-100">Failed to load images.</p>';
+            }
+        }
+
+
+
+        sermons.forEach(sermon => {
+    container.innerHTML += `
+        <div class="card">
+            <video width="100%" controls>
+                <source src="/uploads/${sermon.video_url}" type="video/mp4">
+            </video>
+            
+            <img src="/uploads/${sermon.image_url}" class="img-fluid">
+            
+            <h3>${sermon.title}</h3>
+        </div>
+    `;
+});
+
+        // 2. Handle Button Clicks
+        function filterGallery(category, btnElement) {
+            // Update UI Active State
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            // Load Data
+            loadGallery(category);
+        }
+
+        // Load All on startup
+        document.addEventListener('DOMContentLoaded', () => loadGallery('All'));
+    </script>
+</body>
+</html>

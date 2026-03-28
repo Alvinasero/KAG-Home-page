@@ -1,0 +1,63 @@
+/* custom-style.css */
+:root {
+    --kag-navy: #0a192f;
+    --kag-gold: #d4af37;
+    --kag-gold-hover: #b8962e;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--kag-navy);
+}
+
+.bg-maridadi-navy { background-color: var(--kag-navy); }
+.text-maridadi-gold { color: var(--kag-gold); }
+
+/* Elegant Button Styling */
+.btn-gold {
+    background-color: var(--kag-gold);
+    color: white;
+    border-radius: 30px;
+    padding: 10px 25px;
+    transition: 0.3s all ease;
+    border: none;
+}
+
+.btn-gold:hover {
+    background-color: var(--kag-gold-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Card Hover Effects for Sermons/Events */
+.kag-card {
+    border: none;
+    transition: transform 0.3s ease;
+    border-bottom: 4px solid var(--kag-gold);
+}
+
+.kag-card:hover {
+    transform: translateY(-10px);
+}
+
+
+/* css/style.css */
+:root {
+    --navy: #0a192f;
+    --gold: #d4af37;
+}
+.bg-maridadi-navy { background-color: var(--navy) !important; }
+.text-maridadi-gold { color: var(--gold) !important; }
+.btn-gold { 
+    background-color: var(--gold); 
+    color: white; 
+    border: none; 
+    transition: 0.3s;
+}
+.btn-gold:hover { 
+    background-color: #b8962e; 
+    color: white; 
+    transform: translateY(-2px);
+}
+
