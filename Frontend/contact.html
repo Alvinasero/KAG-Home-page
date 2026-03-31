@@ -6,17 +6,7 @@
     <title>Contact Us | KAG Maridadi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/CSS/style.css">
-
-      <link rel="stylesheet" href="/Frontend/login.html">
-    <link rel="stylesheet" href="/Frontend/dashboard.html">
-    <link rel="stylesheet" href="/Frontend/about.html">
-    <link rel="stylesheet" href="/Frontend/gallery.html">
-    <link rel="stylesheet" href="/Frontend/CSS/style.css">
-    <link rel="stylesheet" href="/Frontend/sermons.html">
-     <link rel="stylesheet" href="/Frontend/blog.html">
-    <link rel="stylesheet" href="/Frontend/events.html">
-    
+    <link rel="stylesheet" href="CSS/style.css">
     <style>
         :root { --navy: #0a192f; --gold: #d4af37; --gold-hover: #b8962e; }
         body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
@@ -87,6 +77,9 @@
 <script>
     document.getElementById('prayerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000' : '';
+
         const data = {
             name: document.getElementById('pName').value,
             phone: document.getElementById('pPhone').value,
@@ -94,7 +87,7 @@
             message: document.getElementById('pMessage').value
         };
 
-        const res = await fetch('/api/prayer-request', {
+        const res = await fetch(`${baseUrl}/api/prayer-request`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
@@ -193,6 +186,9 @@
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://localhost:3000' : '';
+
             const formData = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
@@ -201,23 +197,24 @@
             };
 
             const responseBox = document.getElementById('responseMessage');
-            responseBox.innerHTML = '<div class="alert alert-info">Sending...</div>';
+            responseBox.innerHTML = '<div class="alert alert-info py-2">Sending your message...</div>';
 
             try {
-                const response = await fetch('/api/contact', {
+                const response = await fetch(`${baseUrl}/api/contact-message`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
 
                 if (response.ok) {
-                    responseBox.innerHTML = '<div class="alert alert-success">God bless you! Your message has been sent.</div>';
+                    responseBox.innerHTML = '<div class="alert alert-success py-2">Message sent! We will get back to you soon.</div>';
                     document.getElementById('contactForm').reset();
                 } else {
-                    responseBox.innerHTML = '<div class="alert alert-danger">Failed to send message. Please try again.</div>';
+                    const errorData = await response.json();
+                    responseBox.innerHTML = `<div class="alert alert-danger py-2">Error: ${errorData.message || 'Could not send message'}</div>`;
                 }
             } catch (error) {
-                responseBox.innerHTML = '<div class="alert alert-danger">Server error. Please check your connection.</div>';
+                responseBox.innerHTML = '<div class="alert alert-danger py-2">Server connection failed. Please try again later.</div>';
             }
         });
     </script>

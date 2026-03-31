@@ -2,42 +2,174 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | KAG Maridadi</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #f4f7f6; }
-        .sidebar { height: 100vh; background: #2c3e50; color: white; position: fixed; width: 250px; }
-        .main-content { margin-left: 250px; padding: 40px; }
+        :root { --navy: #0a192f; --gold: #d4af37; }
+        body { background-color: #f4f7f6; font-family: 'Inter', sans-serif; }
+        .sidebar { min-height: 100vh; background: var(--navy); color: white; position: fixed; width: 250px; transition: 0.3s; z-index: 1000; }
+        .nav-link { color: rgba(255,255,255,0.7); transition: 0.3s; border-radius: 5px; margin-bottom: 5px; }
+        .nav-link:hover, .nav-link.active { background: var(--gold); color: var(--navy) !important; font-weight: bold; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .stat-card { border: none; border-radius: 15px; transition: 0.3s; color: white; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .admin-header { background: white; padding: 15px 30px; border-bottom: 1px solid #ddd; margin-left: 250px; }
+        .section-title { border-bottom: 3px solid var(--gold); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; }
     </style>
 </head>
 <body>
-    <div class="sidebar p-3">
-        <h3>KAG Admin</h3>
-        <hr>
+
+    <nav class="sidebar p-3">
+        <h4 class="text-gold fw-bold mb-4 px-3">KAG ADMIN</h4>
         <ul class="nav flex-column">
-            <li class="nav-item"><a href="#" class="nav-link text-white">Sermons</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white">Gallery</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white text-danger" id="logout">Logout</a></li>
+            <li class="nav-item"><a href="#" class="nav-link active" onclick="showSection('stats')"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('sermons')"><i class="fas fa-microphone me-2"></i> Sermons</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn me-2"></i> Announcements</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('messages')"><i class="fas fa-envelope me-2"></i> Prayer Inbox</a></li>
+            <hr class="text-white-50">
+            <li class="nav-item"><a href="#" class="nav-link text-danger" id="logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
         </ul>
+    </nav>
+
+    <div class="admin-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Welcome, <span class="fw-bold" style="color: var(--navy)">Administrator</span></h5>
+        <a href="/" class="btn btn-sm btn-outline-secondary">View Website</a>
     </div>
 
     <div class="main-content">
-        <h2>Upload Church Content</h2>
+        <!-- Stats Section -->
+        <div id="section-stats">
+            <h3 class="section-title">Dashboard Overview</h3>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card stat-card bg-primary p-4">
+                        <h5>Total Sermons</h5>
+                        <h2 id="count-sermons">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card bg-success p-4">
+                        <h5>Pending Prayers</h5>
+                        <h2 id="count-prayers">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card bg-warning text-dark p-4">
+                        <h5>Total Announcements</h5>
+                        <h2 id="count-announcements">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sermons Section -->
+        <div id="section-sermons" style="display:none;">
+            <h3 class="section-title">Sermon Management</h3>
+            
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Upload New Sermon</h5>
+                <form id="uploadSermonForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sermon Title</label>
+                            <input type="text" id="title" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Speaker</label>
+                            <input type="text" id="speaker" class="form-control" placeholder="Rev. John Doe">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select MP4 Video</label>
+                        <input type="file" id="videoFile" class="form-control" accept="video/mp4" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload to Website</button>
+                </form>
+            </div>
         
-        <div class="card p-4 mt-4 shadow-sm">
-            <h4>Add New Sermon Video</h4>
-            <form id="uploadSermonForm">
-                <div class="mb-3">
-                    <label>Sermon Title</label>
-                    <input type="text" id="title" class="form-control" required>
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Existing Sermons</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Speaker</th>
+                                <th>Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sermonTableBody"></tbody>
+                    </table>
                 </div>
-                <div class="mb-3">
-                    <label>Select MP4 Video</label>
-                    <input type="file" id="videoFile" class="form-control" accept="video/mp4" required>
+            </div>
+        </div>
+
+        <!-- Announcements Section -->
+        <div id="section-announcements" style="display:none;">
+            <h3 class="section-title">Manage Wall Announcements</h3>
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Create New Announcement</h5>
+                <form id="announcementForm">
+                    <div class="mb-3">
+                        <label class="form-label">Headline/Title</label>
+                        <input type="text" id="annTitle" class="form-control" placeholder="e.g. Sunday Service Time Change" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date of Event/Announcement</label>
+                        <input type="date" id="annDate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Full Details</label>
+                        <textarea id="annDesc" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post to Wall</button>
+                </form>
+            </div>
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Active Announcements</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="announcementTableBody"></tbody>
+                    </table>
                 </div>
-                <button type="submit" class="btn btn-primary">Upload to Website</button>
-            </form>
+            </div>
+        </div>
+
+        <!-- Messages Section -->
+        <div id="section-messages" style="display:none;">
+            <h3 class="section-title">Communication Inbox</h3>
+            
+            <div class="card p-4 shadow-sm border-0">
+                <h5>General Inquiries</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-5">
+                        <thead>
+                            <tr><th>Date</th><th>From</th><th>Subject</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="messageTableBody"></tbody>
+                    </table>
+                </div>
+
+                <h5 class="mt-4">Prayer Requests</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr><th>Date</th><th>Member</th><th>Request</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="prayerTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -45,33 +177,159 @@
         const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
             ? 'http://localhost:3000' : '';
             
-        const API_BASE_URL = `${baseUrl}/api/admin`;
         const sessionKey = localStorage.getItem('kag_admin_session');
 
-        // Security Check: Redirect to login if no session found
         if (!sessionKey || sessionKey !== "SECRET_CHURCH_KEY_777") {
             window.location.href = 'login.html';
         }
 
-        // Handle Sermon Upload
+        function showSection(sectionId) {
+            ['stats', 'sermons', 'messages', 'announcements'].forEach(id => {
+                const el = document.getElementById('section-' + id);
+                if (el) el.style.display = 'none';
+            });
+            document.getElementById('section-' + sectionId).style.display = 'block';
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+            if (sectionId === 'stats') loadStats();
+            if (sectionId === 'sermons') loadSermons();
+            if (sectionId === 'messages') loadPrayers();
+            if (sectionId === 'messages') loadMessages();
+            if (sectionId === 'announcements') loadAnnouncementsAdmin();
+        }
+
+        async function loadStats() {
+            const sermons = await (await fetch(`${baseUrl}/api/sermons`)).json();
+            const prayers = await (await fetch(`${baseUrl}/api/admin/prayers`)).json();
+            const ann = await (await fetch(`${baseUrl}/api/announcements`)).json();
+            document.getElementById('count-sermons').innerText = sermons.length;
+            document.getElementById('count-prayers').innerText = prayers.filter(p => p.status === 'Pending').length;
+            document.getElementById('count-announcements').innerText = ann.length;
+        }
+
+        async function loadSermons() {
+            const res = await fetch(`${baseUrl}/api/sermons`);
+            const sermons = await res.json();
+            const tbody = document.getElementById('sermonTableBody');
+            tbody.innerHTML = sermons.map(s => `
+                <tr>
+                    <td><strong>${s.title}</strong></td>
+                    <td>${s.speaker || 'KAG Maridadi'}</td>
+                    <td>${new Date(s.createdAt).toLocaleDateString()}</td>
+                    <td class="text-end">
+                        <button onclick="deleteSermon('${s._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteSermon(id) {
+            if (!confirm("Delete this sermon?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/sermons/${id}`, { method: 'DELETE' });
+            if (res.ok) loadSermons();
+        }
+
+        async function loadMessages() {
+            const res = await fetch(`${baseUrl}/api/admin/messages`);
+            const messages = await res.json();
+            const tbody = document.getElementById('messageTableBody');
+            tbody.innerHTML = messages.map(m => `
+                <tr>
+                    <td>${new Date(m.createdAt).toLocaleDateString()}</td>
+                    <td><strong>${m.name}</strong><br><small>${m.email}</small></td>
+                    <td><span class="fw-bold">${m.subject}</span><br>${m.content}</td>
+                    <td><span class="badge ${m.status === 'Unread' ? 'bg-danger' : 'bg-secondary'}">${m.status}</span></td>
+                    <td>
+                        ${m.status === 'Unread' ? `<button onclick="markRead('${m._id}')" class="btn btn-sm btn-outline-primary">Mark Read</button>` : '✅'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function markRead(id) {
+            await fetch(`${baseUrl}/api/admin/messages/${id}`, { method: 'PUT' });
+            loadMessages();
+        }
+
+        async function loadAnnouncementsAdmin() {
+            const res = await fetch(`${baseUrl}/api/announcements`);
+            const list = await res.json();
+            const tbody = document.getElementById('announcementTableBody');
+            tbody.innerHTML = list.map(a => `
+                <tr>
+                    <td><strong>${a.title}</strong><br><small class="text-muted">${a.description}</small></td>
+                    <td>${a.date}</td>
+                    <td class="text-end">
+                        <button onclick="deleteAnnouncement('${a._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteAnnouncement(id) {
+            if (!confirm("Delete this announcement?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { method: 'DELETE' });
+            if (res.ok) loadAnnouncementsAdmin();
+        }
+
+        document.getElementById('announcementForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('annTitle').value;
+            const date = document.getElementById('annDate').value;
+            const description = document.getElementById('annDesc').value;
+
+            const res = await fetch(`${baseUrl}/api/admin/announcements`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, date, description })
+            });
+
+            if (res.ok) {
+                alert("Announcement posted successfully!");
+                document.getElementById('announcementForm').reset();
+                loadAnnouncementsAdmin();
+                loadStats();
+            }
+        };
+
+        async function loadPrayers() {
+            const res = await fetch(`${baseUrl}/api/admin/prayers`);
+            const prayers = await res.json();
+            const tbody = document.getElementById('prayerTableBody');
+            tbody.innerHTML = prayers.map(p => `
+                <tr>
+                    <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                    <td>${p.member_name}</td>
+                    <td>${p.message}</td>
+                    <td><span class="badge ${p.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${p.status}</span></td>
+                    <td>
+                        ${p.status === 'Pending' ? `<button onclick="markPrayed('${p._id}')" class="btn btn-sm btn-success">Mark Prayed</button>` : '✅'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
         document.getElementById('uploadSermonForm').onsubmit = async (e) => {
             e.preventDefault();
             const title = document.getElementById('title').value;
+            const speaker = document.getElementById('speaker').value;
             const videoFile = document.getElementById('videoFile').files[0];
 
             const formData = new FormData();
             formData.append('title', title);
+            formData.append('speaker', speaker);
             formData.append('video', videoFile);
 
             try {
-                const response = await fetch(`${API_BASE_URL}/upload`, {
+                const response = await fetch(`${baseUrl}/api/admin/upload`, {
                     method: 'POST',
                     body: formData
                 });
 
                 if (response.ok) {
                     alert("Sermon uploaded and live on frontend!");
-                    e.target.reset();
+                    location.reload();
                 } else {
                     alert("Upload failed. Make sure the backend is running.");
                 }
@@ -81,11 +339,19 @@
             }
         };
 
-        // Logout Function
-        document.getElementById('logout').addEventListener('click', () => {
-            localStorage.removeItem('kag_admin_session');
-            window.location.href = 'login.html';
+        async function markPrayed(id) {
+            await fetch(`${baseUrl}/api/admin/prayers/${id}`, { method: 'PUT' });
+            loadPrayers();
+        }
+
+        document.getElementById('logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.replace('login.html?logout=success');
         });
+
+        document.addEventListener('DOMContentLoaded', loadStats);
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
