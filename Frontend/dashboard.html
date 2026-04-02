@@ -208,7 +208,7 @@
                 <tr>
                     <td><strong>${s.title}</strong></td>
                     <td>${s.speaker}</td>
-                    <td>${new Date(s.createdAt).toLocaleDateString()}</td>
+                    <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
                     <td class="text-end">
                         <button onclick="deleteSermon('${s._id}')" class="btn btn-sm btn-outline-danger border-0">
                             <i class="fas fa-trash"></i>
@@ -252,7 +252,7 @@
         const tbody = document.getElementById('inboxTableBody');
         tbody.innerHTML = messages.map(m => `
             <tr>
-                <td>${new Date(m.createdAt).toLocaleDateString()}</td>
+                <td>${m.created_at ? new Date(m.created_at).toLocaleDateString() : 'N/A'}</td>
                 <td><strong>${m.name}</strong><br><small>${m.email}</small></td>
                 <td><strong>${m.subject}</strong>: ${m.content}</td>
                 <td><span class="badge ${m.status === 'Unread' ? 'bg-danger' : 'bg-secondary'}">${m.status}</span></td>

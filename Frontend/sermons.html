@@ -114,7 +114,7 @@
 
         sermons.forEach(sermon => {
             // Use the videoUrl property from the backend
-            const videoPath = sermon.videoUrl ? `${baseUrl}${sermon.videoUrl}` : '';
+            const videoPath = sermon.video_url ? `${baseUrl}${sermon.video_url}` : '';
 
             container.innerHTML += `
                 <div class="col-md-4 mb-4">

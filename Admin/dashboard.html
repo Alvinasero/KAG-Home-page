@@ -26,6 +26,7 @@
         <ul class="nav flex-column">
             <li class="nav-item"><a href="#" class="nav-link active" onclick="showSection('stats')"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('sermons')"><i class="fas fa-microphone me-2"></i> Sermons</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('events')"><i class="fas fa-calendar-alt me-2"></i> Calendar Events</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn me-2"></i> Announcements</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('messages')"><i class="fas fa-envelope me-2"></i> Prayer Inbox</a></li>
             <hr class="text-white-50">
@@ -35,6 +36,7 @@
 
     <div class="admin-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Welcome, <span class="fw-bold" style="color: var(--navy)">Administrator</span></h5>
+        <button onclick="clearSystemCache()" class="btn btn-sm btn-outline-warning ms-auto me-2"><i class="fas fa-sync me-1"></i> Clear Cache</button>
         <a href="../Frontend/index.html" class="btn btn-sm btn-outline-secondary">View Website</a>
     </div>
 
@@ -102,6 +104,59 @@
                             </tr>
                         </thead>
                         <tbody id="sermonTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div id="section-events" style="display:none;">
+            <h3 class="section-title">Church Calendar / Events</h3>
+            
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Add New Event</h5>
+                <form id="eventForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Event Title</label>
+                            <input type="text" id="eventTitle" class="form-control" placeholder="e.g. Annual General Meeting" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" id="eventLocation" class="form-control" placeholder="Main Sanctuary / Online" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="eventDate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Time</label>
+                            <input type="text" id="eventTime" class="form-control" placeholder="10:00 AM - 1:00 PM" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea id="eventDesc" class="form-control" rows="2" placeholder="Brief details about the event" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add to Calendar</button>
+                </form>
+            </div>
+        
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Scheduled Events</h5>
+                <div id="eventTableContainer" class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Date/Time</th>
+                                <th>Location</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -186,14 +241,23 @@
         // Helper to get headers with the session token
         const getAuthHeaders = () => ({ 'Authorization': `Bearer ${sessionKey}` });
 
+        function clearSystemCache() {
+            if(confirm("This will clear your local session and refresh the page. Continue?")) {
+                localStorage.removeItem('kag_admin_session');
+                location.reload();
+            }
+        }
+
         function showSection(sectionId) {
-            ['stats', 'sermons', 'messages', 'announcements'].forEach(id => {
+            ['stats', 'sermons', 'messages', 'announcements', 'events'].forEach(id => {
                 const el = document.getElementById('section-' + id);
                 if (el) el.style.display = 'none';
             });
             document.getElementById('section-' + sectionId).style.display = 'block';
             
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            // Highlight active link if triggered by click
+            if (typeof event !== 'undefined' && event && event.currentTarget) event.currentTarget.classList.add('active');
 
             switch(sectionId) {
                 case 'stats': loadStats(); break;
@@ -203,6 +267,7 @@
                     loadMessages(); 
                     break;
                 case 'announcements': loadAnnouncementsAdmin(); break;
+                case 'events': loadEventsAdmin(); break;
             }
         }
 
@@ -237,7 +302,7 @@
                 <tr>
                     <td><strong>${s.title}</strong></td>
                     <td>${s.speaker || 'KAG Maridadi'}</td>
-                    <td>${new Date(s.createdAt).toLocaleDateString()}</td>
+                    <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
                     <td class="text-end">
                         <button onclick="deleteSermon('${s._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                     </td>
@@ -251,7 +316,10 @@
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });
-            if (res.ok) loadSermons();
+            if (res.ok) {
+                loadSermons();
+                loadStats(); // Update counters
+            }
         }
 
         async function loadMessages() {
@@ -260,15 +328,25 @@
             const tbody = document.getElementById('messageTableBody');
             tbody.innerHTML = messages.map(m => `
                 <tr>
-                    <td>${new Date(m.createdAt).toLocaleDateString()}</td>
+                    <td>${m.created_at ? new Date(m.created_at).toLocaleDateString() : 'N/A'}</td>
                     <td><strong>${m.name}</strong><br><small>${m.email}</small></td>
                     <td><span class="fw-bold">${m.subject}</span><br>${m.content}</td>
                     <td><span class="badge ${m.status === 'Unread' ? 'bg-danger' : 'bg-secondary'}">${m.status}</span></td>
                     <td>
                         ${m.status === 'Unread' ? `<button onclick="markRead('${m._id}')" class="btn btn-sm btn-outline-primary">Mark Read</button>` : '✅'}
+                        <button onclick="deleteMessage('${m._id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        async function deleteMessage(id) {
+            if (!confirm("Delete this message?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/messages/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+            if (res.ok) loadMessages();
         }
 
         async function markRead(id) {
@@ -294,13 +372,67 @@
             `).join('');
         }
 
+        async function loadEventsAdmin() {
+            const res = await fetch(`${baseUrl}/api/events`);
+            const events = await res.json();
+            const tbody = document.getElementById('eventTableBody');
+            tbody.innerHTML = events.map(e => `
+                <tr>
+                    <td><strong>${e.title}</strong><br><small>${e.description}</small></td>
+                    <td>${new Date(e.event_date).toLocaleDateString()}<br>${e.event_time}</td>
+                    <td>${e.location}</td>
+                    <td class="text-end">
+                        <button onclick="deleteEvent('${e._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteEvent(id) {
+            if (!confirm("Delete this event?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/events/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+            if (res.ok) loadEventsAdmin();
+        }
+
+        document.getElementById('eventForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('eventTitle').value,
+                location: document.getElementById('eventLocation').value,
+                event_date: document.getElementById('eventDate').value,
+                event_time: document.getElementById('eventTime').value,
+                description: document.getElementById('eventDesc').value
+            };
+
+            const res = await fetch(`${baseUrl}/api/admin/events`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert("Event added to calendar!");
+                document.getElementById('eventForm').reset();
+                loadEventsAdmin();
+            }
+        };
+
         async function deleteAnnouncement(id) {
             if (!confirm("Delete this announcement?")) return;
             const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { 
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });
-            if (res.ok) loadAnnouncementsAdmin();
+            if (res.ok) {
+                loadAnnouncementsAdmin();
+                loadStats(); // Update counters
+            }
         }
 
         document.getElementById('announcementForm').onsubmit = async (e) => {
@@ -338,9 +470,22 @@
                     <td><span class="badge ${p.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${p.status}</span></td>
                     <td>
                         ${p.status === 'Pending' ? `<button onclick="markPrayed('${p._id}')" class="btn btn-sm btn-success">Mark Prayed</button>` : '✅'}
+                        <button onclick="deletePrayer('${p._id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        async function deletePrayer(id) {
+            if (!confirm("Delete this prayer request?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/prayers/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                loadPrayers();
+                loadStats();
+            }
         }
 
         document.getElementById('uploadSermonForm').onsubmit = async (e) => {

@@ -11,6 +11,14 @@ app.use(cors()); // Allows Admin and Frontend to talk to this server
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Allows handling of standard form submissions
 
+// Cache Control: Ensure API responses are never cached by the browser
+app.use('/api', (req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    next();
+});
+
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kag_maridadi';
 mongoose.connect(MONGO_URI)
@@ -173,11 +181,15 @@ app.delete('/api/admin/sermons/:id', async (req, res) => {
         const sermon = await Sermon.findById(req.params.id);
         if (!sermon) return res.status(404).json({ message: 'Sermon not found' });
 
-        // Delete the actual file from disk
-        const fileName = path.basename(sermon.video_url);
-        const fullPath = path.join(uploadDir, fileName);
-        if (fs.existsSync(fullPath)) {
-            fs.unlinkSync(fullPath);
+        if (sermon.video_url) {
+            // Extract filename and construct absolute path
+            const fileName = path.basename(sermon.video_url);
+            const fullPath = path.join(uploadDir, fileName);
+            
+            // Permanently remove file from disk if it exists
+            if (fs.existsSync(fullPath)) {
+                fs.unlinkSync(fullPath);
+            }
         }
 
         await Sermon.findByIdAndDelete(req.params.id);
@@ -201,6 +213,38 @@ app.delete('/api/admin/announcements/:id', async (req, res) => {
     try {
         await Announcement.findByIdAndDelete(req.params.id);
         res.json({ message: 'Announcement deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Delete failed' });
+    }
+});
+
+// Event Management
+app.post('/api/admin/events', async (req, res) => {
+    try {
+        // If using an image upload for events, ensure the path is set correctly
+        if (req.file) {
+            req.body.image_poster = `/uploads/${req.file.filename}`;
+        }
+        const event = await Event.create(req.body);
+        res.json({ message: 'Event created successfully', event });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to create event', error: err.message });
+    }
+});
+
+app.delete('/api/admin/events/:id', async (req, res) => {
+    try {
+        const event = await Event.findById(req.params.id);
+        if (event && event.image_poster) {
+            // Delete associated image file if it exists
+            const fileName = path.basename(event.image_poster);
+            const fullPath = path.join(uploadDir, fileName);
+            if (fs.existsSync(fullPath)) {
+                fs.unlinkSync(fullPath);
+            }
+        }
+        await Event.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Event deleted' });
     } catch (err) {
         res.status(500).json({ message: 'Delete failed' });
     }
@@ -299,6 +343,24 @@ app.get('/api/admin/messages', async (req, res) => {
         res.json(messages);
     } catch (err) {
         res.status(500).json([]);
+    }
+});
+
+app.delete('/api/admin/messages/:id', async (req, res) => {
+    try {
+        await Message.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Message permanently deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Delete failed' });
+    }
+});
+
+app.delete('/api/admin/prayers/:id', async (req, res) => {
+    try {
+        await Prayer.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Prayer request permanently deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Delete failed' });
     }
 });
 

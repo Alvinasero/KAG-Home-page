@@ -112,22 +112,6 @@
             }
         }
 
-
-
-        sermons.forEach(sermon => {
-    container.innerHTML += `
-        <div class="card">
-            <video width="100%" controls>
-                <source src="/uploads/${sermon.video_url}" type="video/mp4">
-            </video>
-            
-            <img src="/uploads/${sermon.image_url}" class="img-fluid">
-            
-            <h3>${sermon.title}</h3>
-        </div>
-    `;
-});
-
         // 2. Handle Button Clicks
         function filterGallery(category, btnElement) {
             // Update UI Active State

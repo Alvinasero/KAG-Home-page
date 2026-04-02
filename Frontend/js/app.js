@@ -13,7 +13,7 @@ async function loadSermons() {
         container.innerHTML = ''; // Clear loader
 
         sermons.forEach(sermon => {
-            const videoPath = sermon.videoUrl ? `${baseUrl}${sermon.videoUrl}` : '#';
+            const videoPath = sermon.video_url ? `${baseUrl}${sermon.video_url}` : '#';
             const description = sermon.description ? sermon.description.substring(0, 100) + '...' : 'No description available.';
 
             container.innerHTML += `
