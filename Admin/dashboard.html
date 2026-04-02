@@ -35,7 +35,7 @@
 
     <div class="admin-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Welcome, <span class="fw-bold" style="color: var(--navy)">Administrator</span></h5>
-        <a href="/" class="btn btn-sm btn-outline-secondary">View Website</a>
+        <a href="../Frontend/index.html" class="btn btn-sm btn-outline-secondary">View Website</a>
     </div>
 
     <div class="main-content">
@@ -85,7 +85,7 @@
                         <label class="form-label">Select MP4 Video</label>
                         <input type="file" id="videoFile" class="form-control" accept="video/mp4" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload to Website</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary">Upload to Website</button>
                 </form>
             </div>
         
@@ -179,9 +179,12 @@
             
         const sessionKey = localStorage.getItem('kag_admin_session');
 
-        if (!sessionKey || sessionKey !== "SECRET_CHURCH_KEY_777") {
+        if (!sessionKey) {
             window.location.href = 'login.html';
         }
+
+        // Helper to get headers with the session token
+        const getAuthHeaders = () => ({ 'Authorization': `Bearer ${sessionKey}` });
 
         function showSection(sectionId) {
             ['stats', 'sermons', 'messages', 'announcements'].forEach(id => {
@@ -192,26 +195,44 @@
             
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
 
-            if (sectionId === 'stats') loadStats();
-            if (sectionId === 'sermons') loadSermons();
-            if (sectionId === 'messages') loadPrayers();
-            if (sectionId === 'messages') loadMessages();
-            if (sectionId === 'announcements') loadAnnouncementsAdmin();
+            switch(sectionId) {
+                case 'stats': loadStats(); break;
+                case 'sermons': loadSermons(); break;
+                case 'messages': 
+                    loadPrayers(); 
+                    loadMessages(); 
+                    break;
+                case 'announcements': loadAnnouncementsAdmin(); break;
+            }
         }
 
         async function loadStats() {
-            const sermons = await (await fetch(`${baseUrl}/api/sermons`)).json();
-            const prayers = await (await fetch(`${baseUrl}/api/admin/prayers`)).json();
-            const ann = await (await fetch(`${baseUrl}/api/announcements`)).json();
-            document.getElementById('count-sermons').innerText = sermons.length;
-            document.getElementById('count-prayers').innerText = prayers.filter(p => p.status === 'Pending').length;
-            document.getElementById('count-announcements').innerText = ann.length;
+            try {
+                const [sermonsRes, prayersRes, annRes] = await Promise.all([
+                    fetch(`${baseUrl}/api/sermons`),
+                    fetch(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() }),
+                    fetch(`${baseUrl}/api/announcements`)
+                ]);
+
+                const sermons = await sermonsRes.json();
+                const prayers = await prayersRes.json();
+                const ann = await annRes.json();
+
+                document.getElementById('count-sermons').innerText = sermons.length || 0;
+                document.getElementById('count-prayers').innerText = prayers.filter(p => p.status === 'Pending').length || 0;
+                document.getElementById('count-announcements').innerText = ann.length || 0;
+            } catch (err) {
+                console.error("Failed to load dashboard stats:", err);
+            }
         }
 
         async function loadSermons() {
-            const res = await fetch(`${baseUrl}/api/sermons`);
-            const sermons = await res.json();
+            const sermons = await (await fetch(`${baseUrl}/api/sermons`)).json();
             const tbody = document.getElementById('sermonTableBody');
+            if (sermons.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No sermons found.</td></tr>';
+                return;
+            }
             tbody.innerHTML = sermons.map(s => `
                 <tr>
                     <td><strong>${s.title}</strong></td>
@@ -226,12 +247,15 @@
 
         async function deleteSermon(id) {
             if (!confirm("Delete this sermon?")) return;
-            const res = await fetch(`${baseUrl}/api/admin/sermons/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${baseUrl}/api/admin/sermons/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
             if (res.ok) loadSermons();
         }
 
         async function loadMessages() {
-            const res = await fetch(`${baseUrl}/api/admin/messages`);
+            const res = await fetch(`${baseUrl}/api/admin/messages`, { headers: getAuthHeaders() });
             const messages = await res.json();
             const tbody = document.getElementById('messageTableBody');
             tbody.innerHTML = messages.map(m => `
@@ -248,7 +272,10 @@
         }
 
         async function markRead(id) {
-            await fetch(`${baseUrl}/api/admin/messages/${id}`, { method: 'PUT' });
+            await fetch(`${baseUrl}/api/admin/messages/${id}`, { 
+                method: 'PUT',
+                headers: getAuthHeaders()
+            });
             loadMessages();
         }
 
@@ -269,7 +296,10 @@
 
         async function deleteAnnouncement(id) {
             if (!confirm("Delete this announcement?")) return;
-            const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
             if (res.ok) loadAnnouncementsAdmin();
         }
 
@@ -281,7 +311,10 @@
 
             const res = await fetch(`${baseUrl}/api/admin/announcements`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
                 body: JSON.stringify({ title, date, description })
             });
 
@@ -294,7 +327,7 @@
         };
 
         async function loadPrayers() {
-            const res = await fetch(`${baseUrl}/api/admin/prayers`);
+            const res = await fetch(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() });
             const prayers = await res.json();
             const tbody = document.getElementById('prayerTableBody');
             tbody.innerHTML = prayers.map(p => `
@@ -312,9 +345,13 @@
 
         document.getElementById('uploadSermonForm').onsubmit = async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('uploadBtn');
             const title = document.getElementById('title').value;
             const speaker = document.getElementById('speaker').value;
             const videoFile = document.getElementById('videoFile').files[0];
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing Upload...';
 
             const formData = new FormData();
             formData.append('title', title);
@@ -324,7 +361,8 @@
             try {
                 const response = await fetch(`${baseUrl}/api/admin/upload`, {
                     method: 'POST',
-                    body: formData
+                    headers: getAuthHeaders(), // Authorization token is required for the upload route
+                    body: formData // Note: Browser sets Content-Type to multipart/form-data automatically
                 });
 
                 if (response.ok) {
@@ -336,11 +374,17 @@
             } catch (err) {
                 console.error("Upload error:", err);
                 alert("Could not connect to backend server.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Upload to Website';
             }
         };
 
         async function markPrayed(id) {
-            await fetch(`${baseUrl}/api/admin/prayers/${id}`, { method: 'PUT' });
+            await fetch(`${baseUrl}/api/admin/prayers/${id}`, { 
+                method: 'PUT',
+                headers: getAuthHeaders()
+            });
             loadPrayers();
         }
 

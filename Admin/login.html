@@ -23,7 +23,7 @@
                     <label>Password</label>
                     <input type="password" id="pass" class="form-control" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Unlock Dashboard</button>
+                <button type="submit" id="loginBtn" class="btn btn-primary w-100">Unlock Dashboard</button>
                 <div class="mt-3 text-center">
                     <a href="#" onclick="forgotPassword()" class="small text-decoration-none">Forgot Password?</a>
                     <hr>
@@ -37,7 +37,7 @@
         // Check if the user just logged out
         if (new URLSearchParams(window.location.search).get('logout') === 'success') {
             if (!confirm("Administrator has logged out successfully. Would you like to log in again?")) {
-                window.location.href = '../index.html'; // Redirect to home if they cancel
+                window.location.href = '../Frontend/index.html';
             }
         }
 
@@ -47,8 +47,12 @@
 
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('loginBtn');
             const username = document.getElementById('user').value;
             const password = document.getElementById('pass').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verifying...';
 
             try {
                 // Call the Backend Login API
@@ -73,6 +77,9 @@
             } catch (err) {
                 console.error("Connection error:", err);
                 alert("Could not reach the backend. Is it running on port 3000?");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Unlock Dashboard';
             }
         };
     </script>
