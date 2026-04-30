@@ -8,29 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="CSS/style.css">
     <style>
-        :root { --navy: #0a192f; --gold: #d4af37; }
         .hero-section {
-            background: linear-gradient(rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.7)), 
-                        url('https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1350&q=80') center/cover;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            color: white;
+            background-image: linear-gradient(rgba(10, 25, 47, 0.2), rgba(10, 25, 47, 0.2)),
+                url('https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1600&q=80');
         }
-        .text-gold { color: var(--gold); }
-        .bg-navy { background-color: var(--navy); }
-        .btn-gold { background-color: var(--gold); color: white; border: none; }
-        .btn-gold:hover { background-color: #b8962e; color: white; }
-        .section-title { border-bottom: 3px solid var(--gold); display: inline-block; padding-bottom: 5px; }
     </style>
 </head>
-<body class="bg-light">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-navy sticky-top">
+<body class="page-shell">
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-gold" href="index.html">KAG MARIDADI</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <a class="navbar-brand" href="index.html">KAG MARIDADI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
@@ -39,61 +27,129 @@
                     <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="sermons.html">Sermons</a></li>
                     <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero-section text-center">
+    <header class="hero-section">
         <div class="container">
-            <h1 class="display-2 fw-bold mb-3">Welcome to <span class="text-gold">KAG Maridadi</span></h1>
-            <p class="lead mb-4 fs-3">A place of Worship, Word, and Wonder.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="sermons.html" class="btn btn-gold btn-lg px-4">Watch Sermons</a>
-                <a href="contact.html" class="btn btn-outline-light btn-lg px-4">Visit Us</a>
+            <span class="eyebrow">Worship / Word / Community</span>
+            <h1 class="hero-title">A church home built for faith and fellowship.</h1>
+            <p class="hero-copy">KAG Maridadi is a place to pray, grow, serve, and encounter God together. The homepage now scales cleanly for Android screens without crushing the hero, buttons, or preview sections.</p>
+            <div class="hero-actions">
+                <a href="sermons.html" class="btn btn-gold">Watch Sermons</a>
+                <a href="contact.html" class="btn btn-outline-light">Plan a Visit</a>
+            </div>
+            <div class="hero-highlight">
+                <div class="mini-stat">
+                    <strong>Sunday Worship</strong>
+                    <span>Spirit-led services and biblical teaching.</span>
+                </div>
+                <div class="mini-stat">
+                    <strong>Prayer Support</strong>
+                    <span>Private and shared prayer requests online.</span>
+                </div>
+                <div class="mini-stat">
+                    <strong>Church Life</strong>
+                    <span>Events, gallery, updates, and sermon archive.</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Announcements Section -->
-    <section class="py-5">
+    <section class="section-space">
         <div class="container">
-            <h2 class="fw-bold text-navy mb-4 section-title">Latest Announcements</h2>
-            <div id="announcementContainer" class="row">
-                <!-- Populated by app.js -->
-                <div class="text-center py-4">
+            <div class="section-heading">
+                <h2>Latest announcements</h2>
+                <p>Important church updates are surfaced in a stacked mobile layout so they remain readable on smaller Android screens.</p>
+            </div>
+            <div id="announcementContainer" class="row g-4">
+                <div class="col-12 text-center py-4">
                     <div class="spinner-border text-warning"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sermons Preview -->
-    <section class="py-5 bg-white">
+    <section class="section-space pt-0">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-navy section-title">Recent Sermons</h2>
-                <a href="sermons.html" class="text-decoration-none text-gold fw-bold">View Archive →</a>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+                <div class="section-heading mb-0">
+                    <h2>Recent sermons</h2>
+                    <p>Quick access to the latest messages with responsive cards and touch-friendly actions.</p>
+                </div>
+                <a href="sermons.html" class="fw-bold text-gold text-decoration-none">View archive</a>
             </div>
-            <div id="sermon-list" class="row">
-                <!-- Populated by app.js -->
+            <div id="sermon-list" class="row g-4"></div>
+        </div>
+    </section>
+
+    <section class="section-space pt-0">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+                <div class="section-heading mb-0">
+                    <h2>Photo gallery</h2>
+                    <p>Recent moments from worship, outreach, youth, and church fellowship.</p>
+                </div>
+                <a href="gallery.html" class="fw-bold text-gold text-decoration-none">View all photos</a>
+            </div>
+            <div id="galleryContainer" class="row g-3">
+                <div class="col-12 text-center py-3"><div class="spinner-border text-warning"></div></div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-5 bg-navy text-white text-center">
+    <footer class="site-footer text-center">
         <div class="container">
             <h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3>
-            <p class="opacity-75">Spreading the Gospel to the ends of the earth.</p>
-            <hr class="my-4 opacity-25">
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="sermons.html">Sermons</a>
+                <a href="events.html">Events</a>
+                <a href="contact.html">Contact</a>
+            </div>
             <p class="mb-0 small">&copy; 2026 KAG Maridadi Church. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        async function fetchGalleryPreview() {
+            const container = document.getElementById('galleryContainer');
+            const isLocal = ['localhost', '127.0.0.1', ''].includes(window.location.hostname) ||
+                            window.location.hostname.startsWith('192.168.');
+            const baseUrl = isLocal ? 'http://localhost:3000' : '';
+
+            try {
+                const res = await fetch(`${baseUrl}/api/gallery`);
+                const items = await res.json();
+
+                if (!items || items.length === 0) {
+                    container.innerHTML = '<div class="col-12 empty-state">No photos shared yet.</div>';
+                    return;
+                }
+
+                container.innerHTML = items.slice(-6).reverse().map(img => {
+                    const imgSrc = img.image_path.startsWith('http') ? img.image_path : `${baseUrl}${img.image_path}`;
+                    return `
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="gallery.html" class="gallery-item d-block">
+                                <img src="${imgSrc}" alt="Gallery image">
+                                <div class="gallery-overlay small">${img.caption || 'KAG Maridadi'}</div>
+                            </a>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                container.innerHTML = '<div class="col-12 empty-state">Gallery preview is unavailable right now.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchGalleryPreview);
+    </script>
 </body>
 </html>

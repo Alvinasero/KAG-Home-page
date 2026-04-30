@@ -4,61 +4,311 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | KAG Maridadi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-grid.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <style>
-        :root { --navy: #0a192f; --gold: #d4af37; }
-        body { background-color: #f4f7f6; font-family: 'Inter', sans-serif; }
-        .sidebar { min-height: 100vh; background: var(--navy); color: white; position: fixed; width: 250px; transition: 0.3s; z-index: 1000; }
-        .nav-link { color: rgba(255,255,255,0.7); transition: 0.3s; border-radius: 5px; margin-bottom: 5px; }
-        .nav-link:hover, .nav-link.active { background: var(--gold); color: var(--navy) !important; font-weight: bold; }
-        .main-content { margin-left: 250px; padding: 30px; }
-        .stat-card { border: none; border-radius: 15px; transition: 0.3s; color: white; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        :root { 
+            --navy: #0a192f; 
+            --navy-light: #112240; 
+            --gold: #d4af37; 
+            --light-bg: #f8fafc; 
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+
+        body { 
+            background-color: var(--light-bg); 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            color: var(--navy);
+        }
+        
+        /* Robust Flex Layout */
+        .wrapper { display: flex; width: 100%; align-items: stretch; min-height: 100vh; }
+        
+        #sidebar {
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
+            background: var(--navy);
+            color: #fff;
+            transition: all 0.3s;
+            min-height: 100vh;
+            z-index: 1001;
+            box-shadow: 12px 0 30px rgba(10, 25, 47, 0.12);
+        }
+
+        .mobile-sidebar-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 12px;
+            background: var(--navy);
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(10, 25, 47, 0.18);
+        }
+
+        #sidebar .nav {
+            gap: 4px;
+            padding: 0 10px;
+        }
+
+        #sidebar .nav-link { 
+            color: rgba(255,255,255,0.78); 
+            padding: 12px 20px; 
+            margin: 0; 
+            border-radius: 12px; 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active { background: var(--gold); color: var(--navy) !important; font-weight: 600; }
+
+        #sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
+            flex: 0 0 20px;
+        }
+
+        .sidebar-divider {
+            border-color: rgba(255,255,255,0.22);
+            margin: 14px 20px;
+        }
+
+        #content { 
+            flex: 1; 
+            min-width: 0;
+            max-width: 100%;
+            transition: all 0.3s; 
+            display: flex; 
+            flex-direction: column;
+            position: relative;
+        }
+
+        .admin-header { 
+            background: #fff; 
+            padding: 15px 30px; 
+            min-height: var(--header-height);
+            border-bottom: 1px solid #dee2e6; 
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky; 
+            top: 0; 
+            z-index: 1040; 
+        }
+
+        .admin-header h5 {
+            font-size: 1.15rem;
+        }
+        
+        /* Cards & Components */
+        .stat-card { border: none; border-radius: 15px; color: white; transition: transform 0.2s; }
         .stat-card:hover { transform: translateY(-5px); }
-        .admin-header { background: white; padding: 15px 30px; border-bottom: 1px solid #ddd; margin-left: 250px; }
-        .section-title { border-bottom: 3px solid var(--gold); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; }
+        .stat-card h5 { font-size: 1rem; margin-bottom: 0.85rem; }
+        .stat-card h2 { font-size: clamp(2.1rem, 5vw, 3rem); margin-bottom: 0; }
+        .bg-grad-sermons { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
+        .bg-grad-prayers { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .bg-grad-announcements { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        
+        .section-title { border-bottom: 3px solid var(--gold); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; font-weight: 700; color: var(--navy); }
+
+        main {
+            width: 100%;
+        }
+
+        /* Table Fixes */
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* Mobile Fixes */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+            }
+
+            .mobile-sidebar-toggle {
+                display: inline-flex;
+            }
+
+            #sidebar {
+                min-width: auto;
+                max-width: none;
+                min-height: auto;
+                position: fixed;
+                top: 88px;
+                left: 16px;
+                right: 16px;
+                border-radius: 20px;
+                box-shadow: 0 20px 44px rgba(10, 25, 47, 0.26);
+                z-index: 1050;
+                overflow: hidden;
+            }
+
+            #sidebar .text-center {
+                padding: 16px 16px 10px !important;
+                text-align: left !important;
+                background: rgba(255,255,255,0.04);
+            }
+
+            #sidebar h4 {
+                font-size: 1rem;
+            }
+
+            #sidebar small {
+                display: block;
+            }
+
+            #sidebar .nav {
+                flex-direction: column !important;
+                flex-wrap: nowrap;
+                gap: 8px;
+                padding: 10px 16px 16px;
+            }
+
+            #sidebar.mobile-collapsed .nav,
+            #sidebar.mobile-collapsed .sidebar-divider,
+            #sidebar.mobile-collapsed .text-center small {
+                display: none !important;
+            }
+
+            #sidebar.mobile-collapsed .text-center {
+                padding-bottom: 16px !important;
+            }
+
+            #sidebar .nav-link {
+                padding: 12px 14px;
+                gap: 10px;
+                font-size: 0.95rem;
+                background: rgba(255,255,255,0.06);
+            }
+
+            #sidebar .nav-link i {
+                width: 18px;
+                flex-basis: 18px;
+                font-size: 1rem;
+            }
+
+            #sidebar.mobile-collapsed {
+                display: none;
+            }
+
+            #content {
+                width: 100%;
+            }
+
+            .admin-header {
+                position: sticky;
+                top: 0;
+                padding: 16px;
+                align-items: flex-start !important;
+                z-index: 1045;
+            }
+
+            .admin-header h5 {
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+
+            .admin-header .header-actions {
+                width: 100%;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .admin-header .btn {
+                flex: 1;
+                width: auto;
+                justify-content: center;
+            }
+
+            .mobile-sidebar-toggle.is-open {
+                background: var(--gold);
+                color: var(--navy);
+            }
+
+            main.p-4 {
+                padding: 1rem !important;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+                line-height: 1.15;
+            }
+
+            .stat-card {
+                border-radius: 18px;
+            }
+
+            .stat-card.p-4 {
+                padding: 1.5rem !important;
+            }
+
+            .card.p-4 {
+                padding: 1rem !important;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="bg-light">
 
-    <nav class="sidebar p-3">
-        <h4 class="text-gold fw-bold mb-4 px-3">KAG ADMIN</h4>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="py-4">
+        <div class="text-center py-4">
+            <h4 class="fw-bold mb-0 text-white px-3" style="letter-spacing: 1px;">KAG <span style="color:var(--gold)">ADMIN</span></h4>
+            <small class="text-white-50">Management Console</small>
+        </div>
         <ul class="nav flex-column">
-            <li class="nav-item"><a href="#" class="nav-link active" onclick="showSection('stats')"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
-            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('sermons')"><i class="fas fa-microphone me-2"></i> Sermons</a></li>
-            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('events')"><i class="fas fa-calendar-alt me-2"></i> Calendar Events</a></li>
-            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn me-2"></i> Announcements</a></li>
-            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('messages')"><i class="fas fa-envelope me-2"></i> Prayer Inbox</a></li>
-            <hr class="text-white-50">
-            <li class="nav-item"><a href="#" class="nav-link text-danger" id="logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+            <li class="nav-item"><a href="#" class="nav-link active" onclick="showSection('stats')"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('sermons')"><i class="fas fa-microphone"></i><span>Sermons</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('events')"><i class="fas fa-calendar-alt"></i><span>Calendar Events</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('gallery')"><i class="fas fa-images"></i><span>Gallery</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i><span>Announcements</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('messages')"><i class="fas fa-envelope"></i><span>Prayer Inbox</span></a></li>
+            <hr class="sidebar-divider">
+            <li class="nav-item"><a href="#" class="nav-link text-danger" id="logout"><i class="fas fa-sign-out-alt me-2"></i> <span>Logout</span></a></li>
         </ul>
     </nav>
 
-    <div class="admin-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Welcome, <span class="fw-bold" style="color: var(--navy)">Administrator</span></h5>
-        <button onclick="clearSystemCache()" class="btn btn-sm btn-outline-warning ms-auto me-2"><i class="fas fa-sync me-1"></i> Clear Cache</button>
-        <a href="../Frontend/index.html" class="btn btn-sm btn-outline-secondary">View Website</a>
-    </div>
+    <!-- Page Content -->
+    <div id="content">
+        <header class="admin-header d-flex justify-content-between align-items-center shadow-sm">
+            <h5 class="mb-0">Welcome, <span class="fw-bold text-primary">Administrator</span></h5>
+            <div class="header-actions">
+                <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="../Frontend/index.html" class="btn btn-sm btn-outline-dark px-3 rounded-pill">View Website</a>
+            </div>
+        </header>
 
-    <div class="main-content">
+        <main class="p-4">
         <!-- Stats Section -->
         <div id="section-stats">
             <h3 class="section-title">Dashboard Overview</h3>
-            <div class="row g-4">
+            <div class="row g-3">
                 <div class="col-md-4">
-                    <div class="card stat-card bg-primary p-4">
+                    <div class="card stat-card bg-grad-sermons p-4">
                         <h5>Total Sermons</h5>
                         <h2 id="count-sermons">0</h2>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card stat-card bg-success p-4">
+                    <div class="card stat-card bg-grad-prayers p-4">
                         <h5>Pending Prayers</h5>
                         <h2 id="count-prayers">0</h2>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card stat-card bg-warning text-dark p-4">
+                    <div class="card stat-card bg-grad-announcements p-4">
                         <h5>Total Announcements</h5>
                         <h2 id="count-announcements">0</h2>
                     </div>
@@ -94,7 +344,7 @@
             <div class="card p-4 shadow-sm border-0">
                 <h5>Existing Sermons</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table id="sermonTable" class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Title</th>
@@ -104,6 +354,49 @@
                             </tr>
                         </thead>
                         <tbody id="sermonTableBody"></tbody>
+                    </table>
+                </div>
+    </div>
+</div>
+
+        <!-- Gallery Section -->
+        <div id="section-gallery" style="display:none;">
+            <h3 class="section-title">Gallery Management</h3>
+            
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Upload New Photo</h5>
+                <form id="galleryForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Caption</label>
+                            <input type="text" id="gCaption" class="form-control" placeholder="e.g. Sunday Worship" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Category</label>
+                            <select id="gCategory" class="form-select">
+                                <option value="Worship">Worship</option>
+                                <option value="Outreach">Outreach</option>
+                                <option value="Youth">Youth</option>
+                                <option value="General">General</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Image</label>
+                        <input type="file" id="gFile" class="form-control" accept="image/*" required>
+                    </div>
+                    <button type="submit" id="gUploadBtn" class="btn btn-primary">Add to Gallery</button>
+                </form>
+            </div>
+        
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Current Gallery Items</h5>
+                <div class="table-responsive">
+                    <table id="galleryTable" class="table table-hover align-middle">
+                        <thead>
+                            <tr><th>Image</th><th>Caption</th><th>Category</th><th class="text-end">Actions</th></tr>
+                        </thead>
+                        <tbody id="galleryTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -140,14 +433,18 @@
                         <label class="form-label">Description</label>
                         <textarea id="eventDesc" class="form-control" rows="2" placeholder="Brief details about the event" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add to Calendar</button>
+                    <div class="mb-3">
+                        <label class="form-label">Event Poster (Optional)</label>
+                        <input type="file" id="eventPoster" class="form-control" accept="image/*">
+                    </div>
+                    <button type="submit" id="eventSubmitBtn" class="btn btn-primary">Add to Calendar</button>
                 </form>
             </div>
         
             <div class="card p-4 shadow-sm border-0">
                 <h5>Scheduled Events</h5>
                 <div id="eventTableContainer" class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table id="eventTable" class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Event</th>
@@ -186,7 +483,7 @@
             <div class="card p-4 shadow-sm border-0">
                 <h5>Active Announcements</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table id="announcementTable" class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Title</th>
@@ -207,7 +504,7 @@
             <div class="card p-4 shadow-sm border-0">
                 <h5>General Inquiries</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover mb-5">
+                    <table id="messageTable" class="table table-hover mb-5">
                         <thead>
                             <tr><th>Date</th><th>From</th><th>Subject</th><th>Status</th><th>Action</th></tr>
                         </thead>
@@ -217,7 +514,7 @@
 
                 <h5 class="mt-4">Prayer Requests</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table id="prayerTable" class="table table-hover">
                         <thead>
                             <tr><th>Date</th><th>Member</th><th>Request</th><th>Status</th><th>Action</th></tr>
                         </thead>
@@ -226,13 +523,25 @@
                 </div>
             </div>
         </div>
-    </div>
+        </main>
+    </div> <!-- /#content -->
+</div> <!-- /.wrapper -->
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? 'http://localhost:3000' : '';
+        // Improved base URL detection for local development
+        const isLocal = ['localhost', '127.0.0.1', ''].includes(window.location.hostname) || 
+                        window.location.hostname.startsWith('192.168.');
+        
+        const baseUrl = isLocal ? 'http://localhost:3000' : '';
             
-        const sessionKey = localStorage.getItem('kag_admin_session');
+        // Use standardized token key
+        const sessionKey = localStorage.getItem('kag_token');
 
         if (!sessionKey) {
             window.location.href = 'login.html';
@@ -241,23 +550,169 @@
         // Helper to get headers with the session token
         const getAuthHeaders = () => ({ 'Authorization': `Bearer ${sessionKey}` });
 
-        function clearSystemCache() {
-            if(confirm("This will clear your local session and refresh the page. Continue?")) {
-                localStorage.removeItem('kag_admin_session');
-                location.reload();
+        // Helper for file uploads (multipart/form-data)
+        const getAuthHeadersForFileUpload = () => ({
+            'Authorization': `Bearer ${sessionKey}`
+            // Content-Type is automatically set by the browser for FormData
+        });
+
+        function redirectToLogin(message = 'Your session has expired. Please log in again.') {
+            alert(message);
+            localStorage.removeItem('kag_token');
+            localStorage.removeItem('kag_role');
+            window.location.replace('login.html?session=expired');
+        }
+
+        async function parseResponseBody(response) {
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                return response.json();
             }
+
+            const text = await response.text();
+            if (contentType.includes('text/html')) {
+                const doc = new DOMParser().parseFromString(text, 'text/html');
+                return doc.querySelector('pre')?.textContent || doc.querySelector('title')?.textContent || 'Server returned an HTML error page';
+            }
+
+            return text;
+        }
+
+        function getResponseErrorMessage(payload, fallback = 'Request failed') {
+            if (typeof payload === 'string') return payload;
+            return payload?.error || payload?.message || fallback;
+        }
+
+        async function fetchJson(url, options = {}) {
+            const separator = url.includes('?') ? '&' : '?';
+            const response = await fetch(`${url}${separator}t=${Date.now()}`, {
+                cache: 'no-store',
+                ...options
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                redirectToLogin();
+                throw new Error(`Unauthorized (${response.status})`);
+            }
+
+            const payload = await parseResponseBody(response);
+
+            if (!response.ok) {
+                const message = getResponseErrorMessage(payload);
+                throw new Error(message);
+            }
+
+            return payload;
+        }
+
+        async function compressImageFile(file, maxDimension = 1600, quality = 0.82) {
+            if (!file || !file.type.startsWith('image/')) return file;
+
+            const bitmap = await createImageBitmap(file);
+            const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+            const width = Math.round(bitmap.width * scale);
+            const height = Math.round(bitmap.height * scale);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0, width, height);
+
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    if (!blob) return resolve(file);
+                    const compressedName = file.name.replace(/\.[^.]+$/, '.jpg');
+                    resolve(new File([blob], compressedName, { type: 'image/jpeg' }));
+                }, 'image/jpeg', quality);
+            });
+        }
+
+        async function uploadFileDirectToCloudinary(file, resourceType, onProgress) {
+            const signature = await fetchJson(`${baseUrl}/api/admin/cloudinary-signature`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
+                body: JSON.stringify({ resource_type: resourceType })
+            });
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('api_key', signature.api_key);
+            formData.append('timestamp', signature.timestamp);
+            formData.append('folder', signature.folder);
+            formData.append('signature', signature.signature);
+
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', signature.upload_url);
+
+                xhr.upload.onprogress = (event) => {
+                    if (!event.lengthComputable || !onProgress) return;
+                    onProgress(Math.round((event.loaded / event.total) * 100));
+                };
+
+                xhr.onload = () => {
+                    let payload;
+                    try {
+                        payload = JSON.parse(xhr.responseText);
+                    } catch {
+                        payload = { message: xhr.responseText };
+                    }
+
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(payload);
+                    } else {
+                        reject(new Error(payload.error?.message || payload.message || 'Cloudinary upload failed'));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error while uploading to Cloudinary'));
+                xhr.send(formData);
+            });
+        }
+
+        const uploadVideoDirectToCloudinary = (file, onProgress) => (
+            uploadFileDirectToCloudinary(file, 'video', onProgress)
+        );
+
+        const uploadImageDirectToCloudinary = async (file, onProgress) => {
+            const compressedFile = await compressImageFile(file);
+            if (isLocal && compressedFile.size < file.size) {
+                console.log(`Compressed image from ${file.size} to ${compressedFile.size} bytes`);
+            }
+            return uploadFileDirectToCloudinary(compressedFile, 'image', onProgress);
+        };
+
+        // Properly clean up table before updating to prevent DataTables count warnings
+        function prepareTable(tableId) {
+            if ($.fn.DataTable.isDataTable(tableId)) {
+                $(tableId).DataTable().destroy();
+            }
+            $(tableId + 'Body').empty();
+        }
+
+        // Initialize DataTable with consistent responsive settings
+        function initTable(tableId) {
+            $(tableId).DataTable({
+                responsive: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50]
+            });
         }
 
         function showSection(sectionId) {
-            ['stats', 'sermons', 'messages', 'announcements', 'events'].forEach(id => {
+            ['stats', 'sermons', 'messages', 'announcements', 'events', 'gallery'].forEach(id => {
                 const el = document.getElementById('section-' + id);
                 if (el) el.style.display = 'none';
             });
             document.getElementById('section-' + sectionId).style.display = 'block';
             
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            // Highlight active link if triggered by click
-            if (typeof event !== 'undefined' && event && event.currentTarget) event.currentTarget.classList.add('active');
+            const activeLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+            if (activeLink) activeLink.classList.add('active');
 
             switch(sectionId) {
                 case 'stats': loadStats(); break;
@@ -268,20 +723,21 @@
                     break;
                 case 'announcements': loadAnnouncementsAdmin(); break;
                 case 'events': loadEventsAdmin(); break;
+                case 'gallery': loadGalleryAdmin(); break;
+            }
+
+            if (window.innerWidth <= 768) {
+                setMobileSidebarExpanded(false);
             }
         }
 
         async function loadStats() {
             try {
-                const [sermonsRes, prayersRes, annRes] = await Promise.all([
-                    fetch(`${baseUrl}/api/sermons`),
-                    fetch(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() }),
-                    fetch(`${baseUrl}/api/announcements`)
+                const [sermons, prayers, ann] = await Promise.all([
+                    fetchJson(`${baseUrl}/api/sermons`),
+                    fetchJson(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() }),
+                    fetchJson(`${baseUrl}/api/announcements`)
                 ]);
-
-                const sermons = await sermonsRes.json();
-                const prayers = await prayersRes.json();
-                const ann = await annRes.json();
 
                 document.getElementById('count-sermons').innerText = sermons.length || 0;
                 document.getElementById('count-prayers').innerText = prayers.filter(p => p.status === 'Pending').length || 0;
@@ -292,52 +748,71 @@
         }
 
         async function loadSermons() {
-            const sermons = await (await fetch(`${baseUrl}/api/sermons`)).json();
+            prepareTable('#sermonTable');
+            const sermons = await fetchJson(`${baseUrl}/api/sermons`);
             const tbody = document.getElementById('sermonTableBody');
-            if (sermons.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No sermons found.</td></tr>';
-                return;
-            }
+            
             tbody.innerHTML = sermons.map(s => `
                 <tr>
                     <td><strong>${s.title}</strong></td>
                     <td>${s.speaker || 'KAG Maridadi'}</td>
                     <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
                     <td class="text-end">
-                        <button onclick="deleteSermon('${s._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        <button onclick="deleteSermon('${s._id || s.id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+            
+            initTable('#sermonTable');
         }
 
         async function deleteSermon(id) {
             if (!confirm("Delete this sermon?")) return;
-            const res = await fetch(`${baseUrl}/api/admin/sermons/${id}`, { 
-                method: 'DELETE',
-                headers: getAuthHeaders()
-            });
-            if (res.ok) {
-                loadSermons();
-                loadStats(); // Update counters
+            if (!id || id === 'undefined') return alert("Error: Invalid Sermon ID");
+
+            try {
+                const res = await fetch(`${baseUrl}/api/admin/sermons/${id}`, { 
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    loadSermons();
+                    loadStats();
+                } else {
+                    const err = await parseResponseBody(res);
+                    const message = getResponseErrorMessage(err, 'Server error');
+                    if (res.status === 401 || res.status === 403) {
+                        redirectToLogin();
+                        return;
+                    }
+                    alert("Deletion Failed: " + message);
+                }
+            } catch (e) { 
+                console.error("Terminal Error:", e);
+                alert("Network error. Check terminal for backend status."); 
             }
         }
 
         async function loadMessages() {
-            const res = await fetch(`${baseUrl}/api/admin/messages`, { headers: getAuthHeaders() });
-            const messages = await res.json();
+            prepareTable('#messageTable');
+            const messages = await fetchJson(`${baseUrl}/api/admin/messages`, { headers: getAuthHeaders() });
             const tbody = document.getElementById('messageTableBody');
+            
             tbody.innerHTML = messages.map(m => `
                 <tr>
-                    <td>${m.created_at ? new Date(m.created_at).toLocaleDateString() : 'N/A'}</td>
+                    <td><span class="text-muted small">${m.created_at ? new Date(m.created_at).toLocaleDateString() : 'N/A'}</span></td>
                     <td><strong>${m.name}</strong><br><small>${m.email}</small></td>
                     <td><span class="fw-bold">${m.subject}</span><br>${m.content}</td>
-                    <td><span class="badge ${m.status === 'Unread' ? 'bg-danger' : 'bg-secondary'}">${m.status}</span></td>
+                    <td><span class="badge rounded-pill ${m.status === 'Unread' ? 'bg-danger' : 'bg-secondary'}">${m.status}</span></td>
                     <td>
-                        ${m.status === 'Unread' ? `<button onclick="markRead('${m._id}')" class="btn btn-sm btn-outline-primary">Mark Read</button>` : '✅'}
-                        <button onclick="deleteMessage('${m._id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
+                        ${m.status === 'Unread' ? `<button onclick="markRead('${m._id || m.id}')" class="btn btn-sm btn-outline-primary">Mark Read</button>` : '✅'}
+                        <button onclick="deleteMessage('${m._id || m.id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+            
+            initTable('#messageTable');
         }
 
         async function deleteMessage(id) {
@@ -346,46 +821,152 @@
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });
-            if (res.ok) loadMessages();
+            if (res.ok) {
+                loadMessages();
+                loadStats();
+            } else {
+                alert("Unauthorized or failed to delete message.");
+            }
         }
 
         async function markRead(id) {
-            await fetch(`${baseUrl}/api/admin/messages/${id}`, { 
-                method: 'PUT',
-                headers: getAuthHeaders()
-            });
+            try {
+                const res = await fetch(`${baseUrl}/api/admin/messages/${id}`, { 
+                    method: 'PUT',
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) throw new Error("Update failed");
+            } catch (e) {
+                alert("Failed to update message status.");
+            }
             loadMessages();
         }
 
         async function loadAnnouncementsAdmin() {
-            const res = await fetch(`${baseUrl}/api/announcements`);
-            const list = await res.json();
+            prepareTable('#announcementTable');
+            const list = await fetchJson(`${baseUrl}/api/announcements`);
             const tbody = document.getElementById('announcementTableBody');
+            
             tbody.innerHTML = list.map(a => `
                 <tr>
-                    <td><strong>${a.title}</strong><br><small class="text-muted">${a.description}</small></td>
-                    <td>${a.date}</td>
+                    <td><div class="fw-bold text-navy">${a.title}</div><div class="small text-muted">${a.description}</div></td>
+                    <td><span class="badge bg-light text-dark border">${a.date}</span></td>
                     <td class="text-end">
-                        <button onclick="deleteAnnouncement('${a._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        <button onclick="deleteAnnouncement('${a._id || a.id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+            
+            initTable('#announcementTable');
         }
 
+        async function loadGalleryAdmin() {
+            prepareTable('#galleryTable');
+            const items = await fetchJson(`${baseUrl}/api/gallery`);
+            const tbody = document.getElementById('galleryTableBody');
+            
+            tbody.innerHTML = items.map(i => {
+                const imgSrc = i.image_path.startsWith('http') ? i.image_path : `${baseUrl}${i.image_path}`;
+                return `
+                <tr>
+                    <td><img src="${imgSrc}" style="height:60px; width:80px; object-fit:cover;" class="rounded shadow-sm"></td>
+                    <td><span class="fw-bold">${i.caption}</span></td>
+                    <td><span class="badge bg-info text-dark">${i.category}</span></td>
+                    <td class="text-end">
+                        <button onclick="deleteGalleryItem('${i._id || i.id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                `}).join('');
+            
+            initTable('#galleryTable');
+        }
+
+        async function deleteGalleryItem(id) {
+            if (!confirm("Remove this image from the gallery?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/gallery/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                loadGalleryAdmin();
+                loadStats(); // Update dashboard stats
+            }
+        }
+
+        document.getElementById('galleryForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('gUploadBtn');
+            const imageFile = document.getElementById('gFile').files[0];
+
+            if (!imageFile) {
+                alert('Please choose an image first.');
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerText = 'Compressing...';
+
+                const cloudinaryUpload = await uploadImageDirectToCloudinary(imageFile, (percent) => {
+                    btn.innerText = `Uploading ${percent}%`;
+                });
+
+                btn.innerText = 'Saving...';
+
+                const res = await fetch(`${baseUrl}/api/admin/gallery/direct`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        caption: document.getElementById('gCaption').value,
+                        category: document.getElementById('gCategory').value,
+                        image_path: cloudinaryUpload.secure_url
+                    })
+                });
+
+                btn.disabled = false;
+                btn.innerText = 'Add to Gallery';
+
+                if (res.ok) {
+                    alert("Photo added to gallery!");
+                    document.getElementById('galleryForm').reset();
+                    loadGalleryAdmin();
+                } else {
+                    const errorData = await parseResponseBody(res);
+                    const message = getResponseErrorMessage(errorData, 'Check server logs');
+                    if (res.status === 401 || res.status === 403) {
+                        redirectToLogin();
+                        return;
+                    }
+                    alert(`Upload failed: ${message}`);
+                }
+            } catch (err) {
+                console.error("Gallery upload connection error:", err);
+                alert("Could not connect to the server. Is the backend running?");
+                btn.disabled = false;
+                btn.innerText = 'Add to Gallery';
+            }
+        };
+
         async function loadEventsAdmin() {
-            const res = await fetch(`${baseUrl}/api/events`);
-            const events = await res.json();
+            prepareTable('#eventTable');
+            const events = await fetchJson(`${baseUrl}/api/events`);
             const tbody = document.getElementById('eventTableBody');
+            
             tbody.innerHTML = events.map(e => `
                 <tr>
-                    <td><strong>${e.title}</strong><br><small>${e.description}</small></td>
-                    <td>${new Date(e.event_date).toLocaleDateString()}<br>${e.event_time}</td>
-                    <td>${e.location}</td>
+                    <td><div class="fw-bold">${e.title}</div><div class="small text-muted">${e.description}</div></td>
+                    <td><i class="far fa-calendar me-1"></i> ${new Date(e.event_date).toLocaleDateString()}<br><i class="far fa-clock me-1 text-gold"></i> ${e.event_time}</td>
+                    <td><i class="fas fa-map-marker-alt me-1 text-danger"></i> ${e.location}</td>
                     <td class="text-end">
-                        <button onclick="deleteEvent('${e._id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        <button onclick="deleteEvent('${e._id || e.id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+            
+            initTable('#eventTable');
         }
 
         async function deleteEvent(id) {
@@ -394,45 +975,84 @@
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });
-            if (res.ok) loadEventsAdmin();
+            if (res.ok) {
+                loadEventsAdmin();
+                loadStats(); // Update dashboard stats
+            }
         }
 
         document.getElementById('eventForm').onsubmit = async (e) => {
             e.preventDefault();
-            const data = {
-                title: document.getElementById('eventTitle').value,
-                location: document.getElementById('eventLocation').value,
-                event_date: document.getElementById('eventDate').value,
-                event_time: document.getElementById('eventTime').value,
-                description: document.getElementById('eventDesc').value
-            };
+            const btn = document.getElementById('eventSubmitBtn');
+            const posterFile = document.getElementById('eventPoster').files[0];
 
-            const res = await fetch(`${baseUrl}/api/admin/events`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    ...getAuthHeaders()
-                },
-                body: JSON.stringify(data)
-            });
+            try {
+                btn.disabled = true;
 
-            if (res.ok) {
-                alert("Event added to calendar!");
-                document.getElementById('eventForm').reset();
-                loadEventsAdmin();
+                let imagePosterUrl = '';
+                if (posterFile) {
+                    btn.innerText = 'Compressing poster...';
+                    const cloudinaryUpload = await uploadImageDirectToCloudinary(posterFile, (percent) => {
+                        btn.innerText = `Uploading poster ${percent}%`;
+                    });
+                    imagePosterUrl = cloudinaryUpload.secure_url;
+                }
+
+                btn.innerText = 'Saving event...';
+
+                const res = await fetch(`${baseUrl}/api/admin/events/direct`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        title: document.getElementById('eventTitle').value,
+                        location: document.getElementById('eventLocation').value,
+                        event_date: document.getElementById('eventDate').value,
+                        event_time: document.getElementById('eventTime').value,
+                        description: document.getElementById('eventDesc').value,
+                        image_poster: imagePosterUrl
+                    })
+                });
+
+                if (res.ok) {
+                    alert("Event added to calendar!");
+                    document.getElementById('eventForm').reset();
+                    loadEventsAdmin();
+                } else {
+                    const errorData = await parseResponseBody(res);
+                    const message = getResponseErrorMessage(errorData, 'Event creation failed');
+                    if (res.status === 401 || res.status === 403) {
+                        redirectToLogin();
+                        return;
+                    }
+                    alert("Event creation failed: " + message);
+                }
+            } catch (err) {
+                console.error("Event creation connection error:", err);
+                alert(`Event creation failed: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Add to Calendar';
             }
         };
 
         async function deleteAnnouncement(id) {
             if (!confirm("Delete this announcement?")) return;
-            const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { 
-                method: 'DELETE',
-                headers: getAuthHeaders()
-            });
-            if (res.ok) {
-                loadAnnouncementsAdmin();
-                loadStats(); // Update counters
-            }
+            try {
+                const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { 
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    loadAnnouncementsAdmin();
+                    loadStats();
+                } else {
+                    const errorText = await res.text();
+                    alert('Failed to delete: ' + errorText);
+                }
+            } catch (e) { alert("Connection to backend failed."); }
         }
 
         document.getElementById('announcementForm').onsubmit = async (e) => {
@@ -455,25 +1075,32 @@
                 document.getElementById('announcementForm').reset();
                 loadAnnouncementsAdmin();
                 loadStats();
+            } else { //
+                const errorText = await res.text();
+                console.error('Failed to post announcement:', errorText); //
+                alert("Failed to post announcement. Make sure the backend is running and you are authorized."); //
             }
         };
 
         async function loadPrayers() {
-            const res = await fetch(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() });
-            const prayers = await res.json();
+            prepareTable('#prayerTable');
+            const prayers = await fetchJson(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() });
             const tbody = document.getElementById('prayerTableBody');
+            
             tbody.innerHTML = prayers.map(p => `
                 <tr>
-                    <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                    <td><span class="text-muted small">${new Date(p.created_at).toLocaleDateString()}</span></td>
                     <td>${p.member_name}</td>
-                    <td>${p.message}</td>
-                    <td><span class="badge ${p.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${p.status}</span></td>
+                    <td><div style="max-width:300px" class="small italic">"${p.message}"</div></td>
+                    <td><span class="badge rounded-pill ${p.status === 'Pending' ? 'bg-warning text-dark' : 'bg-success'}">${p.status}</span></td>
                     <td>
-                        ${p.status === 'Pending' ? `<button onclick="markPrayed('${p._id}')" class="btn btn-sm btn-success">Mark Prayed</button>` : '✅'}
-                        <button onclick="deletePrayer('${p._id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
+                        ${p.status === 'Pending' ? `<button onclick="markPrayed('${p._id || p.id}')" class="btn btn-sm btn-success">Mark Prayed</button>` : '✅'}
+                        <button onclick="deletePrayer('${p._id || p.id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
+            
+            initTable('#prayerTable');
         }
 
         async function deletePrayer(id) {
@@ -484,7 +1111,7 @@
             });
             if (res.ok) {
                 loadPrayers();
-                loadStats();
+                loadStats(); // Update dashboard stats
             }
         }
 
@@ -495,30 +1122,51 @@
             const speaker = document.getElementById('speaker').value;
             const videoFile = document.getElementById('videoFile').files[0];
 
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing Upload...';
+            if (!videoFile) {
+                alert('Please choose a video file first.');
+                return;
+            }
 
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('speaker', speaker);
-            formData.append('video', videoFile);
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Preparing upload...';
 
             try {
-                const response = await fetch(`${baseUrl}/api/admin/upload`, {
+                const cloudinaryUpload = await uploadVideoDirectToCloudinary(videoFile, (percent) => {
+                    btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Uploading ${percent}%`;
+                });
+
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving sermon...';
+
+                const response = await fetch(`${baseUrl}/api/admin/sermons/direct`, {
                     method: 'POST',
-                    headers: getAuthHeaders(), // Authorization token is required for the upload route
-                    body: formData // Note: Browser sets Content-Type to multipart/form-data automatically
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        title,
+                        speaker,
+                        video_url: cloudinaryUpload.secure_url
+                    })
                 });
 
                 if (response.ok) {
                     alert("Sermon uploaded and live on frontend!");
-                    location.reload();
+                    document.getElementById('uploadSermonForm').reset();
+                    showSection('sermons');
+                    loadStats();
                 } else {
-                    alert("Upload failed. Make sure the backend is running.");
+                    const errorData = await parseResponseBody(response);
+                    const message = getResponseErrorMessage(errorData, 'Upload failed');
+                    if (response.status === 401 || response.status === 403) {
+                        redirectToLogin();
+                        return;
+                    }
+                    alert(`Upload failed: ${message}`);
                 }
             } catch (err) {
-                console.error("Upload error:", err);
-                alert("Could not connect to backend server.");
+                console.error("Sermon upload error:", err);
+                alert("Connection failed. The video might be too large for the server limits.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'Upload to Website';
@@ -526,10 +1174,15 @@
         };
 
         async function markPrayed(id) {
-            await fetch(`${baseUrl}/api/admin/prayers/${id}`, { 
-                method: 'PUT',
-                headers: getAuthHeaders()
-            });
+            try {
+                const res = await fetch(`${baseUrl}/api/admin/prayers/${id}`, { 
+                    method: 'PUT',
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) throw new Error("Update failed");
+            } catch (e) {
+                alert("Failed to update prayer status.");
+            }
             loadPrayers();
         }
 
@@ -539,8 +1192,49 @@
             window.location.replace('login.html?logout=success');
         });
 
-        document.addEventListener('DOMContentLoaded', loadStats);
+        const sidebar = document.getElementById('sidebar');
+        const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+        const mobileSidebarToggleIcon = mobileSidebarToggle.querySelector('i');
+
+        function setMobileSidebarExpanded(isExpanded) {
+            sidebar.classList.toggle('mobile-collapsed', !isExpanded && window.innerWidth <= 768);
+            mobileSidebarToggle.classList.toggle('is-open', isExpanded && window.innerWidth <= 768);
+            mobileSidebarToggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+            mobileSidebarToggleIcon.className = isExpanded && window.innerWidth <= 768 ? 'fas fa-times' : 'fas fa-bars';
+        }
+
+        function syncMobileSidebarState() {
+            if (window.innerWidth <= 768) {
+                setMobileSidebarExpanded(false);
+            } else {
+                sidebar.classList.remove('mobile-collapsed');
+                mobileSidebarToggle.classList.remove('is-open');
+                mobileSidebarToggle.setAttribute('aria-expanded', 'false');
+                mobileSidebarToggleIcon.className = 'fas fa-bars';
+            }
+        }
+
+        mobileSidebarToggle.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                const isExpanded = sidebar.classList.contains('mobile-collapsed');
+                setMobileSidebarExpanded(isExpanded);
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (window.innerWidth > 768) return;
+            if (sidebar.classList.contains('mobile-collapsed')) return;
+            if (sidebar.contains(event.target) || mobileSidebarToggle.contains(event.target)) return;
+            setMobileSidebarExpanded(false);
+        });
+
+        window.addEventListener('resize', syncMobileSidebarState);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            syncMobileSidebarState();
+            loadStats();
+            showSection('stats'); // Ensure the default section is properly initialized
+        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

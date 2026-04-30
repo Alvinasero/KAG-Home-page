@@ -273,7 +273,7 @@
         const formData = new FormData();
         formData.append('title', document.getElementById('sTitle').value);
         formData.append('speaker', document.getElementById('sSpeaker').value);
-        formData.append('sermonFile', document.getElementById('sFile').files[0]);
+        formData.append('video', document.getElementById('sFile').files[0]);
 
         const response = await fetch('/api/admin/sermons', {
             method: 'POST',
@@ -283,7 +283,8 @@
 
         if (response.ok) {
             alert('Sermon uploaded successfully!');
-            location.reload();
+            await loadAdminSermons();
+            await loadStats();
         } else {
             alert('Upload failed. Check server logs.');
         }
