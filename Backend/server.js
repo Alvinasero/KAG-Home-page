@@ -54,7 +54,12 @@ app.use('/api', (req, res, next) => {
 });
 
 // MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kag_maridadi';
+const MONGO_URI = getEnv('MONGO_URI');
+
+if (!MONGO_URI) {
+    throw new Error('Missing MONGO_URI in Backend/.env');
+}
+
 mongoose.connect(MONGO_URI)
     .then(() => console.log('Connected to MongoDB successfully'))
     .catch(err => console.error('MongoDB connection error:', err));
