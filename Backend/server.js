@@ -80,6 +80,7 @@ const Sermon = mongoose.model('Sermon', new mongoose.Schema({
     video_url: { type: String, required: true },
     speaker: String,
     category: String,
+    description: String,
     created_at: { type: Date, default: Date.now }
 }));
 
@@ -188,6 +189,7 @@ app.post('/api/admin/register', async (req, res) => {
         res.status(201).json({ message: 'Administrator account created successfully' });
     } catch (err) {
         console.error('Registration failed:', err);
+        res.status(500).json({ message: 'Registration failed', error: err.message });
     }
 });
 
@@ -263,7 +265,9 @@ const uploadSingle = (fieldName, options) => (req, res, next) => {
 
     upload.single(fieldName)(req, res, (err) => {
         if (!err) {
-            debugUpload(fieldName, req.file);
+            if (isDevelopment) {
+                console.log(`Upload successful for ${fieldName}:`, req.file ? (req.file.secure_url || req.file.path) : 'No file data');
+            }
             return next();
         }
 
@@ -309,7 +313,8 @@ const handleSermonUpload = async (req, res) => {
             title: req.body.title, 
             video_url: getUploadedFileUrl(req.file),
             speaker: req.body.speaker || 'KAG Maridadi Church',
-            category: req.body.category || 'General'
+            category: req.body.category || 'General',
+            description: req.body.description
         });
         res.json({ message: 'Upload success', sermon: newSermon });
     } catch (err) {
@@ -326,7 +331,7 @@ app.post('/api/admin/sermons', uploadSingle('video', {
 
 app.post('/api/admin/sermons/direct', async (req, res) => {
     try {
-        const { title, speaker, category, video_url } = req.body;
+        const { title, speaker, category, video_url, description } = req.body;
 
         if (!title || !video_url) {
             return res.status(400).json({ message: 'Title and video URL are required' });
@@ -340,7 +345,8 @@ app.post('/api/admin/sermons/direct', async (req, res) => {
             title,
             video_url,
             speaker: speaker || 'KAG Maridadi Church',
-            category: category || 'General'
+            category: category || 'General',
+            description: description
         });
 
         res.status(201).json({ message: 'Sermon saved successfully', sermon: newSermon });
