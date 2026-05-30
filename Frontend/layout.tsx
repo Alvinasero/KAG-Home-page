@@ -1,0 +1,22 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import '../../globals.css'; // Corrected path to root globals.css
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'KAG Maridadi Church',
+  description: 'Raising Lives, Building Faith, Transforming Nations.',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
+    </html>
+  );
+}
