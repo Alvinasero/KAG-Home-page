@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/js/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | KAG Maridadi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/style.css">
     <style>
         :root {
             --navy: #0a192f;
@@ -35,18 +37,20 @@
             color: var(--navy);
         }
     </style>
+    <link rel="stylesheet" href="CSS/site-pages.css">
+    <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
-<body class="d-flex align-items-center vh-100">
+<body class="portal-page d-flex align-items-center vh-100">
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
                 <div class="text-center mb-4">
-                    <h2 class="fw-bold text-maridadi-navy">KAG MARIDADI</h2>
-                    <p class="text-muted">Portal Access</p>
+                    <img class="portal-logo" src="/assets/kag-maridadi-logo.svg" alt="KAG Maridadi crest"><h2 class="portal-brand">KAG MARIDADI</h2>
+                    <p class="portal-brand-subtitle small">Member Portal</p>
                 </div>
                 
-                <div class="card shadow-lg login-card">
+                <div class="card shadow-lg login-card portal-card">
                     <div class="card-body p-4">
                         <form id="loginForm">
                             <div class="mb-3">
@@ -58,26 +62,36 @@
                                 <input type="password" class="form-control" id="password" placeholder="••••••••" required>
                             </div>
                             <button type="submit" class="btn btn-gold w-100 py-2">Sign In</button>
+                            <div class="mt-3 text-center">
+                                <a href="#" onclick="alert('Please contact the church office to reset your portal password.')" class="small text-decoration-none text-muted">Forgot Password?</a>
+                            </div>
                         </form>
                     </div>
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="index.html" class="text-decoration-none text-muted small">← Back to Church Home</a>
+                    <p class="small text-muted">Need an account? <a href="contact.html" class="text-gold text-decoration-none fw-bold">Contact Admin</a></p>
+                    <a href="index.html" class="text-decoration-none text-muted small mt-2 d-block">← Back to Church Home</a>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Check if the user just logged out
+        if (new URLSearchParams(window.location.search).get('logout') === 'success') {
+            if (!confirm("Administrator has logged out successfully. Would you like to log in again?")) {
+                window.location.href = 'index.html'; // Redirect to home if they cancel
+            }
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const username = document.getElementById('email').value; // Backend expects username
             const password = document.getElementById('password').value;
 
-            const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                ? 'http://localhost:3000' : '';
+            const baseUrl = window.location.origin;
 
             try {
                 const response = await fetch(`${baseUrl}/api/admin/login`, {

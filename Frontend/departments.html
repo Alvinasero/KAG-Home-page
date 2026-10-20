@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <script src="/js/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments | KAG Maridadi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/style.css">
+    <style>
+        .page-hero { padding: clamp(56px, 8vw, 110px) 0; background: var(--navy); color: #f2f3fa; }
+        .page-hero h1 { font: 500 clamp(2.8rem, 5vw, 5rem)/1.05 'Playfair Display', Georgia, serif; }
+        .department-card { min-height: 230px; padding: 30px; border: 1px solid rgba(8,15,43,.1); background: #fff; }
+        .department-card .number { color: var(--gold); font-size: .78rem; font-weight: 700; letter-spacing: .18em; }
+        .department-card h2 { margin: 18px 0 10px; font: 600 1.6rem 'Playfair Display', Georgia, serif; }
+        .department-card a { color: var(--navy); font-weight: 700; text-decoration: none; }
+        .department-card a:hover { color: #9a7925; }
+        .nextgen-section { margin-bottom: 54px; }
+        .nextgen-card { height: 100%; min-height: 330px; padding: 30px 24px; border: 1px solid rgba(201,169,79,.24); background: linear-gradient(145deg, #111e50, #17245a); color: #e6e8f0; text-align: center; }
+        .nextgen-icon { display: block; margin: 0 auto 20px; font-size: 2.5rem; line-height: 1.2; }
+        .nextgen-card h2 { margin: 0 0 14px; color: #eef0f7; font: 500 1.55rem 'Playfair Display', Georgia, serif !important; }
+        .nextgen-card p { margin: 0; color: #a4abc0; font-size: .95rem; line-height: 1.7; }
+        html[data-theme="light"] .nextgen-card { background: #fff; color: #17233b; }
+        html[data-theme="light"] .nextgen-card h2 { color: #17233b; }
+        html[data-theme="light"] .nextgen-card p { color: #637087; }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>Kenya Assemblies of God</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#leadership">Leadership</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="departments.html">Departments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sermons.html">Education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#beliefs">Credentials</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-gold" href="contact.html?topic=giving#contactForm">Give</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="page-hero">
+        <div class="container">
+            <p class="hero-kicker">Growing together</p>
+            <h1>Find your place<br><em style="color:var(--gold-bright)">to serve.</em></h1>
+            <p class="mt-4 mb-0 text-white-50 fs-5">Our church departments help every generation worship, learn, and care for our community.</p>
+        </div>
+    </header>
+    <main class="container py-5">
+        <section class="nextgen-section" aria-labelledby="nextgen-title">
+            <div class="text-center mb-4">
+                <p class="hero-kicker">Faith for every age</p>
+                <h2 id="nextgen-title" class="text-navy">Children, teens &amp; youth</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4"><article class="nextgen-card"><span class="nextgen-icon" aria-hidden="true">&#x1F466;</span><h2>Children</h2><p>Laying the foundation of faith for Kenya's youngest believers in every KAG congregation.</p></article></div>
+                <div class="col-md-4"><article class="nextgen-card"><span class="nextgen-icon" aria-hidden="true">&#x1F9D1;</span><h2>Teens</h2><p>Guiding teenagers through adolescence with truth, community, and a strong sense of God-given identity. The Teens Ministry also supports the KAG Eco Cycle Initiative, tackling period poverty through reusable pad production and skills training for young women.</p></article></div>
+                <div class="col-md-4"><article class="nextgen-card"><span class="nextgen-icon" aria-hidden="true">&#x1F64B;&#x200D;&#x2640;&#xFE0F;</span><h2>Youth</h2><p>Raising bold, Spirit-empowered young adults ready to lead Kenya into its next chapter.</p></article></div>
+            </div>
+        </section>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4"><article class="department-card h-100"><span class="number">01 / FELLOWSHIP</span><h2>Men's Ministry</h2><p>Growing as disciples and supporting families and the wider church community.</p><a href="contact.html#contactForm">Get involved →</a></article></div>
+            <div class="col-md-6 col-lg-4"><article class="department-card h-100"><span class="number">02 / FELLOWSHIP</span><h2>Women's Ministry</h2><p>Building faith, friendship, and opportunities to serve across our community.</p><a href="contact.html#contactForm">Get involved →</a></article></div>
+            <div class="col-md-6 col-lg-4"><article class="department-card h-100"><span class="number">03 / WORSHIP</span><h2>Worship & Music</h2><p>Serving the congregation through music, prayer, and shared worship.</p><a href="contact.html#contactForm">Get involved →</a></article></div>
+            <div class="col-md-6 col-lg-4"><article class="department-card h-100"><span class="number">04 / COMMUNITY</span><h2>Outreach & Care</h2><p>Sharing practical care and the hope of the Gospel with our neighbors.</p><a href="contact.html#contactForm">Get involved →</a></article></div>
+            <div class="col-md-6 col-lg-4"><article class="department-card h-100"><span class="number">05 / DISCIPLESHIP</span><h2>Bible Learning</h2><p>Growing in scripture and putting faith into practice together.</p><a href="sermons.html">Explore teaching →</a></article></div>
+        </div>
+    </main>
+    <footer class="py-4 bg-navy text-white text-center"><div class="container"><h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3><div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="about.html#leadership">Leadership</a><a href="events.html">Events</a><a href="sermons.html">Education</a><a href="about.html#beliefs">Credentials</a><a href="gallery.html">Gallery</a><a href="blog.html">News</a><a href="contact.html">Contact</a></div><p class="mb-0 small opacity-75">&copy; 2026 KAG Maridadi Church. All Rights Reserved.</p></div></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/site.js"></script>
+</body>
+</html>

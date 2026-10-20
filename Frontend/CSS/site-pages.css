@@ -1,0 +1,78 @@
+/* Shared treatment for internal portal and confirmation screens. */
+:root { --navy: #080f2b; --navy-soft: #111a39; --gold: #c9a94f; --gold-bright: #ddb93f; }
+.portal-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 82% 15%, rgba(201,169,79,.16), transparent 35%),
+        linear-gradient(135deg, #080f2b, #111a39) !important;
+}
+.portal-page { box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 32px 0; color: #eef0f7; }
+.portal-card, .success-card {
+    background: var(--navy-soft) !important;
+    color: #e6e8f0 !important;
+    border: 1px solid rgba(201,169,79,.45) !important;
+    border-top: 4px solid var(--gold) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 24px 70px rgba(0,0,0,.25) !important;
+}
+.portal-brand { color: #f0f1f8 !important; font: 500 2rem 'Playfair Display', Georgia, serif; }
+.portal-brand-subtitle { color: var(--gold-bright); letter-spacing: .2em; text-transform: uppercase; }
+.portal-card .form-label { color: #dce0eb; }
+.portal-card .form-control { min-height: 46px; border-color: #36415e; border-radius: 3px; background: #0b1430; color: #f0f1f7; }
+.portal-card .form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 .2rem rgba(201,169,79,.2); }
+.portal-card .btn, .success-card .btn { border-radius: 3px !important; }
+.portal-card .btn-primary, .portal-card .btn-success { border-color: var(--gold) !important; background: var(--gold) !important; color: var(--navy) !important; font-weight: 700; }
+.success-card { width: min(500px, calc(100% - 32px)); }
+.success-card h1 { color: #f0f1f7 !important; font-family: 'Playfair Display', Georgia, serif; }
+
+/* Administration workspace */
+body.admin-page { background: #080f2b !important; color: #e6e8f0; }
+.sidebar {
+    background: var(--navy) !important;
+    border-right: 1px solid rgba(201,169,79,.3);
+    color: #eef0f7 !important;
+}
+.sidebar h4 { color: var(--gold-bright) !important; font: 600 1.2rem 'Playfair Display', Georgia, serif; letter-spacing: .08em; }
+.sidebar .nav-link {
+    padding: 11px 14px;
+    border: 1px solid transparent;
+    border-radius: 3px !important;
+    color: #aeb4c7 !important;
+    font-size: .82rem;
+    letter-spacing: .04em;
+}
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    border-color: rgba(201,169,79,.35);
+    background: rgba(201,169,79,.13) !important;
+    color: var(--gold-bright) !important;
+}
+.admin-header {
+    min-height: 74px;
+    background: var(--navy) !important;
+    border-bottom: 1px solid rgba(201,169,79,.35) !important;
+    color: #eef0f7;
+}
+.admin-header h5, .admin-header .text-navy { color: #eef0f7 !important; }
+.admin-header .btn { border-color: var(--gold) !important; color: var(--gold-bright) !important; }
+.section-title { border-color: var(--gold) !important; color: var(--navy); font: 600 1.8rem 'Playfair Display', Georgia, serif; }
+.stat-card { border: 1px solid rgba(201,169,79,.35) !important; border-radius: 4px !important; background: var(--navy) !important; color: #f4f4f8 !important; }
+.stat-card h2 { color: var(--gold-bright); font-family: 'Playfair Display', Georgia, serif; }
+body.admin-page .card { border: 1px solid rgba(8,15,43,.08) !important; border-radius: 4px !important; box-shadow: 0 10px 32px rgba(8,15,43,.06) !important; }
+body.admin-page .table, body.admin-page .table td, body.admin-page .table th { --bs-table-bg: #111a39; --bs-table-color: #e6e8f0; border-color: #303b58; color: #e6e8f0; }
+body.admin-page .table thead th { background: var(--navy); color: #f2f2f7; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+body.admin-page .table-light, body.admin-page .table-light th { --bs-table-bg: #182344; --bs-table-color: #f0f1f7; background: #182344 !important; color: #f0f1f7 !important; }
+body.admin-page .btn-primary, body.admin-page .btn-success { border-color: var(--gold) !important; background: var(--gold) !important; color: var(--navy) !important; font-weight: 700; }
+body.admin-page .form-control, body.admin-page .form-select { border-radius: 3px; }
+
+@media (max-width: 767.98px) {
+    .admin-header { margin-left: 0 !important; padding: 14px 18px !important; }
+    .main-content { margin-left: 0 !important; padding: 20px !important; }
+    .sidebar { position: relative !important; width: 100% !important; min-height: auto !important; }
+    #content-section { padding: 20px !important; }
+}
+
+/* Keep portal and admin headings in line with the smaller site type scale. */
+.portal-brand { font-size: 1.5rem !important; }
+.sidebar h4 { font-size: 1.05rem !important; }
+.section-title { font-size: 1.45rem !important; }
+.stat-card h2 { font-size: 1.8rem !important; }

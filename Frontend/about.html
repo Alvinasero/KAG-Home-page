@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/js/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | KAG Maridadi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="CSS/style.css">
     <style>
         /* Hero Mini Section */
         .about-header {
@@ -28,27 +29,32 @@
         .vm-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
         /* Leadership Section */
-        .leader-card {
-            border: none;
-            overflow: hidden;
-            border-radius: 15px;
-            background: #f8f9fa;
+        .leadership-section { background: #080f2b; }
+        .leadership-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:2rem; text-align:left; }
+        .leadership-heading h2 { margin:0; font-size:clamp(2.5rem,4vw,4rem); font-weight:400; }
+        .leadership-heading h2 em { color:var(--gold); font-weight:400; }
+        .leader-card { height:100%; padding:2rem 1rem; border:1px solid rgba(255,255,255,.1); border-radius:4px; background:linear-gradient(145deg,#16275e,#101c49); }
+        .leader-img { width:126px; height:126px; margin:0 auto 1.5rem; border:3px solid rgba(201,169,79,.5); border-radius:50%; object-fit:cover; }
+        .leader-card h3 { font-size:1.35rem; font-weight:400; }
+        .leader-role { color:var(--gold-bright); font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; }
+        .profile-link { color:#eef0f7; font-size:.78rem; font-weight:700; letter-spacing:.08em; text-decoration:none; text-transform:uppercase; }
+        .profile-link:hover { color:var(--gold-bright); }
+        .leader-dialog { width:min(600px,calc(100% - 2rem)); padding:2rem; border:1px solid rgba(201,169,79,.45); border-radius:6px; background:#101a3a; color:#e6e8f0; }
+        .leader-dialog::backdrop { background:rgba(3,8,25,.78); }
+        .leader-dialog h3 { font-size:1.8rem; }
+        .leader-dialog .dialog-close { float:right; border:0; background:transparent; color:inherit; font-size:1.5rem; }
+        .leader-youth-img {
+            object-fit: contain;
+            background: radial-gradient(circle at 50% 35%, #263557, #0b1430 72%);
         }
-        .leader-img {
-            height: 350px;
-            width: 100%;
-            object-fit: cover;
-            filter: grayscale(100%);
-            transition: 0.5s;
-        }
-        .leader-card:hover .leader-img { filter: grayscale(0%); transform: scale(1.05); }
     </style>
+    <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-maridadi-navy sticky-top border-bottom border-warning">
         <div class="container">
-            <a class="navbar-brand fw-bold text-maridadi-gold" href="index.html">KAG MARIDADI</a>
+            <a class="navbar-brand fw-bold text-maridadi-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>KAG MARIDADI</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -56,9 +62,13 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="sermons.html">Sermons</a></li>
-                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#leadership">Leadership</a></li>
+                    <li class="nav-item"><a class="nav-link" href="departments.html">Departments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sermons.html">Education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#beliefs">Credentials</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-gold" href="contact.html?topic=giving#contactForm">Give</a></li>
                 </ul>
             </div>
         </div>
@@ -71,7 +81,7 @@
         </div>
     </header>
 
-    <section class="py-5">
+    <section class="py-5" id="beliefs">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
@@ -119,47 +129,29 @@
         </div>
     </section>
 
-    <section class="py-5">
-        <div class="container text-center">
-            <h2 class="fw-bold mb-5 text-maridadi-navy">Our <span class="text-maridadi-gold">Leadership</span></h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card leader-card shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1544168190-79c17527004f?auto=format&fit=crop&w=500&q=60" class="leader-img" alt="Senior Pastor">
-                        <div class="card-body bg-white">
-                            <h5 class="fw-bold mb-0">Rev. Samuel Okello</h5>
-                            <p class="text-maridadi-gold small fw-bold">Senior Pastor</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card leader-card shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=60" class="leader-img" alt="Associate Pastor">
-                        <div class="card-body bg-white">
-                            <h5 class="fw-bold mb-0">Pastor Grace Wanjiku</h5>
-                            <p class="text-maridadi-gold small fw-bold">Associate Pastor</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card leader-card shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=60" class="leader-img" alt="Youth Pastor">
-                        <div class="card-body bg-white">
-                            <h5 class="fw-bold mb-0">Pastor David Mutua</h5>
-                            <p class="text-maridadi-gold small fw-bold">Youth Minister</p>
-                        </div>
-                    </div>
-                </div>
+    <section class="py-5 leadership-section" id="leadership">
+        <div class="container">
+            <div class="leadership-heading"><h2>KAG <em>Leadership</em></h2><a class="btn btn-outline-light text-uppercase" href="#leader-profiles">Full profiles <span aria-hidden="true">→</span></a></div>
+            <div class="row g-4 text-center" id="leader-profiles">
+                <div class="col-md-4"><article class="leader-card"><img src="/assets/20260809_110519.jpg" class="leader-img" alt="Rev. Samuel Okello" loading="lazy" decoding="async"><h3>Rev. Samuel Okello</h3><p class="leader-role">Senior Pastor</p><a class="profile-link" href="#profile-samuel">Full profile <span aria-hidden="true">→</span></a></article></div>
+                <div class="col-md-4"><article class="leader-card"><img src="/assets/20260816_125759.jpg" class="leader-img" alt="Pastor Grace Wanjiku" loading="lazy" decoding="async"><h3>Pastor Grace Wanjiku</h3><p class="leader-role">Associate Pastor</p><a class="profile-link" href="#profile-grace">Full profile <span aria-hidden="true">→</span></a></article></div>
+                <div class="col-md-4"><article class="leader-card"><img src="/assets/caleb%202.png" class="leader-img leader-youth-img" alt="Pastor David Mutua" loading="lazy" decoding="async"><h3>Pastor David Mutua</h3><p class="leader-role">Youth Minister</p><a class="profile-link" href="#profile-david">Full profile <span aria-hidden="true">→</span></a></article></div>
             </div>
+            <dialog class="leader-dialog" id="profile-samuel" aria-labelledby="samuel-name"><button class="dialog-close" type="button" aria-label="Close profile">×</button><p class="leader-role">Senior Pastor</p><h3 id="samuel-name">Rev. Samuel Okello</h3><p>Leads the church’s pastoral ministry, teaches and preaches the Christian faith, and provides spiritual care and direction to the congregation.</p></dialog>
+            <dialog class="leader-dialog" id="profile-grace" aria-labelledby="grace-name"><button class="dialog-close" type="button" aria-label="Close profile">×</button><p class="leader-role">Associate Pastor</p><h3 id="grace-name">Pastor Grace Wanjiku</h3><p>Supports the senior pastor in caring for the congregation, coordinating ministry, and helping members grow in faith and service.</p></dialog>
+            <dialog class="leader-dialog" id="profile-david" aria-labelledby="david-name"><button class="dialog-close" type="button" aria-label="Close profile">×</button><p class="leader-role">Youth Minister</p><h3 id="david-name">Pastor David Mutua</h3><p>Leads ministry with young people, creating opportunities for them to grow in faith, build community, and take part in the life of the church.</p></dialog>
         </div>
     </section>
 
     <footer class="bg-maridadi-navy text-white py-4 text-center">
         <div class="container">
+            <h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3>
+            <div class="footer-links"><a href="index.html">Home</a><a href="about.html#leadership">Leadership</a><a href="departments.html">Departments</a><a href="events.html">Events</a><a href="sermons.html">Education</a><a href="about.html#beliefs">Credentials</a><a href="gallery.html">Gallery</a><a href="blog.html">News</a><a href="contact.html">Contact</a></div>
             <p class="mb-0">© 2026 KAG Maridadi Church. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/site.js"></script>
 </body>
 </html>

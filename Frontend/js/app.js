@@ -1,29 +1,60 @@
 // app.js
 async function loadSermons() {
+    const container = document.getElementById('sermon-list');
+    if (!container) return;
+
     try {
-        const response = await fetch('/api/sermons'); // Your backend route
+        const baseUrl = window.location.origin;
+
+        const response = await fetch(`${baseUrl}/api/sermons`);
+        if (!response.ok) throw new Error('Could not load sermons. Please refresh and try again.');
         const sermons = await response.json();
-        
-        const container = document.getElementById('sermon-list');
         container.innerHTML = ''; // Clear loader
 
-        sermons.forEach(sermon => {
+        const availableSermons = (Array.isArray(sermons) ? sermons : []).filter(sermon =>
+            (sermon._id && sermon.video_available) || (sermon.image_available && sermon.image_url)
+        );
+
+        if (availableSermons.length === 0) {
+            container.innerHTML = '<div class="col-12 text-center text-muted">No sermons with available media have been published yet.</div>';
+            return;
+        }
+
+        availableSermons.forEach(sermon => {
+            const videoPath = sermon._id && sermon.video_available
+                ? `${baseUrl}/api/sermons/${encodeURIComponent(sermon._id)}/video`
+                : '';
+            const imagePath = sermon.image_available ? sermon.image_url : '';
+            const posterPath = sermon.poster_available ? sermon.poster_url : '';
+            const mediaMarkup = videoPath
+                ? `<video class="sermon-media-video" controls preload="metadata" playsinline poster="${posterPath}" aria-label="Watch ${sermon.title || 'sermon'}"><source src="${videoPath}" type="video/mp4">Your browser does not support video playback.</video>`
+                : imagePath
+                    ? `<img class="sermon-media-image" src="${imagePath}" alt="${sermon.title || 'Sermon'}" loading="lazy">`
+                    : '';
+            const description = sermon.description ? sermon.description.substring(0, 100) + '...' : 'No description available.';
+            const downloadPath = sermon._id
+                ? `${baseUrl}/api/sermons/${encodeURIComponent(sermon._id)}/download`
+                : videoPath;
+
             container.innerHTML += `
                 <div class="col-md-4 mb-4">
                     <div class="card kag-card h-100 shadow-sm">
+                        <div class="sermon-media">${mediaMarkup}</div>
                         <div class="card-body">
-                            <h5 class="card-title text-maridadi-navy fw-bold">${sermon.title}</h5>
-                            <p class="text-muted small">By ${sermon.speaker} | ${new Date(sermon.upload_date).toLocaleDateString()}</p>
-                            <p class="card-text">${sermon.description.substring(0, 100)}...</p>
-                            <a href="${sermon.video_url}" class="btn btn-sm btn-outline-primary">Watch Now</a>
-                            <a href="${sermon.video_url}" download class="btn btn-sm btn-link text-maridadi-gold">Download</a>
+                            <h5 class="card-title text-maridadi-navy fw-bold">${sermon.title || 'Untitled Message'}</h5>
+                            <p class="text-muted small">By ${sermon.speaker || 'KAG Maridadi'} | ${new Date(sermon.created_at || Date.now()).toLocaleDateString()}</p>
+                            <p class="card-text">${description}</p>
+                            ${videoPath ? `<a href="${videoPath}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">Open Video</a>` : '<span class="text-muted small">Sermon image</span>'}
+                            ${downloadPath && sermon.media_available ? `<a href="${downloadPath}" class="btn btn-sm btn-link text-maridadi-gold">Download</a>` : ''}
                         </div>
                     </div>
                 </div>
             `;
         });
+        window.addSermonVideoPreviews?.(container);
     } catch (error) {
         console.error("Error loading sermons:", error);
+        container.innerHTML = '<div class="col-12 text-center text-muted">Sermons could not load right now. Please refresh to try again.</div>';
     }
 }
 
@@ -32,23 +63,43 @@ async function loadAnnouncements() {
     if (!container) return; // Exit if not on the homepage
 
     try {
-        const res = await fetch('/api/announcements');
+        const baseUrl = window.location.origin;
+
+        const res = await fetch(`${baseUrl}/api/announcements`);
+        if (!res.ok) throw new Error('Announcement request failed');
         const data = await res.json();
-        
-        container.innerHTML = '';
-        data.forEach(item => {
-            container.innerHTML += `
-                <div class="col-md-6 mb-3">
-                    <div class="p-4 bg-white shadow-sm rounded border-start border-warning border-4">
-                        <h5>${item.title}</h5>
-                        <p class="text-muted small">Date: ${item.date}</p>
-                        <p>${item.description}</p>
-                    </div>
-                </div>
-            `;
+
+        container.replaceChildren();
+        if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = '<div class="announcement-empty">There are no current announcements.</div>';
+            return;
+        }
+
+        data.forEach((item) => {
+            const card = document.createElement('article');
+            card.className = 'announcement-card';
+
+            const date = document.createElement('time');
+            date.className = 'announcement-date';
+            const parsedDate = item.date ? new Date(`${item.date}T00:00:00`) : null;
+            if (parsedDate && !Number.isNaN(parsedDate.getTime())) {
+                date.dateTime = item.date;
+                date.textContent = new Intl.DateTimeFormat('en-KE', { day: 'numeric', month: 'short', year: 'numeric' }).format(parsedDate);
+            } else {
+                date.textContent = 'Church update';
+            }
+
+            const title = document.createElement('h3');
+            title.textContent = item.title || 'Church announcement';
+            const description = document.createElement('p');
+            description.textContent = item.description || '';
+
+            card.append(date, title, description);
+            container.append(card);
         });
     } catch (error) {
         console.error("Error loading announcements:", error);
+        container.innerHTML = '<div class="announcement-empty">Announcements could not load right now. Please refresh to try again.</div>';
     }
 }
 

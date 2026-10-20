@@ -2,39 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KAG Maridadi | Welcome</title>
+        <script src="/js/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | KAG Maridadi Church</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
-<body class="container py-5">
-    <h1 class="mb-4">Watch Latest Sermons</h1>
-    <div id="sermonList" class="row"></div>
+<body class="bg-light">
 
-    <script>
-        async function loadSermons() {
-            try {
-                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                    ? 'http://localhost:3000' : '';
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>Kenya Assemblies of God</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#leadership">Leadership</a></li>
+                    <li class="nav-item"><a class="nav-link" href="departments.html">Departments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sermons.html">Education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#beliefs">Credentials</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-gold" href="contact.html?topic=giving#contactForm">Give</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-                // Fetch the list of sermons from the Backend
-                const res = await fetch(`${baseUrl}/api/sermons`);
-                const sermons = await res.json();
-                const list = document.getElementById('sermonList');
-                
-                list.innerHTML = sermons.map(s => `
-                    <div class="col-md-4 mb-3">
-                        <div class="card p-3 shadow-sm">
-                            <h5>${s.title}</h5>
-                            <video width="100%" controls>
-                                <source src="${baseUrl}${s.videoUrl}" type="video/mp4">
-                            </video>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                console.error("Failed to load sermons", err);
-            }
-        }
-        loadSermons();
-    </script>
+    <!-- Hero Section -->
+    <header class="home-hero">
+        <div class="home-hero-copy">
+            <div class="hero-location">Kenya · Est. 1972</div>
+            <div class="hero-kicker">Kenya Assemblies of God</div>
+            <h1>Every Soul <em>Matters.</em></h1>
+            <p>KAG Maridadi is a welcoming church rooted in the Word and led by the Spirit. We worship together, grow in faith, and serve our community with the transforming love of Jesus Christ.</p>
+            <div class="hero-actions">
+                <a href="about.html">Learn More <span aria-hidden="true">→</span></a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+        <div class="home-hero-image"><img src="/assets/FB_IMG_1732594058864.jpg" alt="Pastor preaching during a KAG Maridadi church service"></div>
+    </header>
+
+    <div class="home-stats" aria-label="Church values">
+        <div><strong>One Church</strong><span>Growing together in faith</span></div>
+        <div><strong>Every Generation</strong><span>Room to belong and serve</span></div>
+        <div><strong>Our Community</strong><span>Here for Maridadi and beyond</span></div>
+    </div>
+
+    <section class="church-finder" id="find-a-church" aria-labelledby="church-finder-title">
+        <div class="container">
+            <p class="eyebrow">5,000+ Congregations Nationwide</p>
+            <div class="church-finder-heading"><h2 id="church-finder-title">Find a KAG Church <em>Near You</em></h2><p>Choose a district to get connected with the KAG church network across Kenya.</p></div>
+            <div class="church-finder-controls">
+                <label class="visually-hidden" for="districtSearch">Search KAG districts</label>
+                <input id="districtSearch" type="search" placeholder="Search among KAG districts…" autocomplete="off">
+                <label class="visually-hidden" for="districtSelect">Select a KAG district</label>
+                <select id="districtSelect" aria-describedby="districtHelp">
+                    <option value="">Select a district</option>
+                    <option>Amagoro</option><option>Angata</option><option>Bahati</option><option>Baringo</option><option>Bogetaorio</option><option>Bogichoncho</option><option>Boma</option><option>Bomachoge</option><option>Bomet</option><option>Borangi</option><option>Budira</option><option>Bungoma</option><option>Bungoma South</option><option>Busia</option><option>Butere</option><option>Cherengany</option><option>Eastern</option><option>Elementaita</option><option>Endebess</option><option>Ewuaso</option><option>Gusii</option><option>Kajiado</option><option>Kakamega</option><option>Kakamega North</option><option>Kapenguria</option><option>Keiyo</option><option>Kericho</option><option>Kiambu East</option><option>Kiambu West</option><option>Kibera</option><option>Kisii</option><option>Kisumu</option><option>Kitale</option><option>Kitui</option><option>Machakos</option><option>Malindi</option><option>Marakwet</option><option>Meru</option><option>Mombasa</option><option>Murang'a</option><option>Nairobi</option><option>Nairobi East</option><option>Nairobi North</option><option>Nairobi South</option><option>Nairobi West</option><option>Nakuru</option><option>Nandi</option><option>Narok</option><option>Nyeri</option><option>Ol Kalou</option><option>Rongai</option><option>Samburu</option><option>Siaya</option><option>Thika</option><option>Trans Nzoia</option><option>Turkana</option><option>Uasin Gishu</option><option>Vihiga</option><option>West Pokot</option>
+                </select>
+                <button id="resetDistrictSearch" type="button">All districts</button>
+            </div>
+            <p class="district-count" id="districtCount" aria-live="polite">Browse KAG districts across Kenya.</p>
+            <div class="district-help" id="districtHelp"><p>For church addresses and local contacts, the KAG national office can connect you with your district superintendent.</p><a href="https://kag.ke/contact.html" target="_blank" rel="noopener noreferrer">Contact KAG National Office <span aria-hidden="true">↗</span></a></div>
+        </div>
+    </section>
+
+    <section class="home-intro">
+        <div class="container home-intro-grid">
+            <div><p class="eyebrow">Who We Are</p><h2>A church for <em>every soul.</em></h2></div>
+            <div><p>KAG Maridadi is a community learning to follow Jesus with faith, compassion, and courage. We gather around worship and the Word, and we make space for every person to grow and serve.</p><a class="text-link" href="about.html">Our story <span aria-hidden="true">→</span></a></div>
+        </div>
+    </section>
+
+    <section class="home-community" aria-labelledby="community-title">
+        <div class="container">
+            <div class="section-heading-row">
+                <div><p class="eyebrow">Life at KAG Maridadi</p><h2 id="community-title">Faith lived <em>together.</em></h2></div>
+                <a class="text-link" href="gallery.html">More moments <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="community-photo-grid">
+                <figure class="community-photo community-photo-wide"><img src="/assets/20250525_105401.jpg" alt="Church members gathered together at a community event"><figcaption>Growing in fellowship</figcaption></figure>
+                <figure class="community-photo"><img src="/assets/20250525_103144.jpg" alt="Young members of the KAG Maridadi community"><figcaption>Every generation belongs</figcaption></figure>
+                <figure class="community-photo"><img src="/assets/IMG-20250904-WA0002.jpg" alt="KAG Maridadi pastor sharing a moment outdoors"><figcaption>Serving with care</figcaption></figure>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-departments">
+        <div class="container">
+            <div class="section-heading-row"><div><p class="eyebrow">Find Your Place</p><h2>Growing <em>together.</em></h2></div><a class="text-link" href="departments.html">All departments <span aria-hidden="true">→</span></a></div>
+            <div class="home-department-grid">
+                <a href="departments.html"><span>01</span><strong>Children & Youth</strong><small>Faith for the next generation</small><b aria-hidden="true">↗</b></a>
+                <a href="departments.html"><span>02</span><strong>Men's Ministry</strong><small>Fellowship and service</small><b aria-hidden="true">↗</b></a>
+                <a href="departments.html"><span>03</span><strong>Women's Ministry</strong><small>Growing in faith together</small><b aria-hidden="true">↗</b></a>
+                <a href="departments.html"><span>04</span><strong>Outreach & Care</strong><small>Serving our neighbors</small><b aria-hidden="true">↗</b></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Announcements Section -->
+    <section class="announcements-section">
+        <div class="container">
+            <div class="announcements-heading"><div><p class="eyebrow">Stay Connected</p><h2 class="section-title">Latest <em>Announcements</em></h2></div><p>Church updates and important dates for our community.</p></div>
+            <div id="announcementContainer" class="announcement-grid" aria-live="polite">
+                <!-- Populated by app.js -->
+                <div class="announcement-empty">
+                    <div class="spinner-border text-warning"></div>
+                    <span>Loading announcements…</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-visit">
+        <div class="container home-visit-inner">
+            <div><p class="eyebrow">You Are Welcome Here</p><h2>Come worship <em>with us.</em></h2><p>Whether you are new to church or have been part of our family for years, there is a place for you at KAG Maridadi.</p></div>
+            <a class="hero-visit-link" href="contact.html">Plan a visit <span aria-hidden="true">→</span></a>
+        </div>
+    </section>
+
+    <!-- Sermons Preview -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-navy section-title">Recent Sermons</h2>
+                <a href="sermons.html" class="text-decoration-none text-gold fw-bold">View Archive →</a>
+            </div>
+            <div id="sermon-list" class="row">
+                <!-- Populated by app.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-navy text-white text-center">
+        <div class="container">
+            <h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3>
+            <p class="opacity-75">Spreading the Gospel to the ends of the earth.</p>
+            <div class="footer-links"><a href="about.html">About</a><a href="about.html#leadership">Leadership</a><a href="departments.html">Departments</a><a href="events.html">Events</a><a href="sermons.html">Education</a><a href="about.html#beliefs">Credentials</a><a href="gallery.html">Gallery</a><a href="blog.html">News</a><a href="contact.html">Contact</a><a href="contact.html?topic=giving#contactForm">Give</a></div>
+            <hr class="my-4 opacity-25">
+            <p class="mb-0 small">&copy; 2026 KAG Maridadi Church. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/site.js"></script>
 </body>
 </html>

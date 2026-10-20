@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/js/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery | KAG Maridadi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        <link rel="stylesheet" href="/Frontend/CSS/style.css">
+    <link rel="stylesheet" href="CSS/style.css">
     <style>
         :root { --navy: #0a192f; --gold: #d4af37; }
         .bg-navy { background-color: var(--navy); }
@@ -19,16 +20,26 @@
         .gallery-item:hover .gallery-overlay { bottom: 0; }
         .modal-content { background: transparent; border: none; }
     </style>
+    <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
 <body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
         <div class="container">
-            <a class="navbar-brand fw-bold text-gold" href="index.html">KAG MARIDADI</a>
-            <div class="collapse navbar-collapse">
+            <a class="navbar-brand fw-bold text-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>KAG MARIDADI</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="gallery.html">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#leadership">Leadership</a></li>
+                    <li class="nav-item"><a class="nav-link" href="departments.html">Departments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sermons.html">Education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#beliefs">Credentials</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-gold" href="contact.html?topic=giving#contactForm">Give</a></li>
                 </ul>
             </div>
         </div>
@@ -111,23 +122,6 @@
                 container.innerHTML = '<p class="text-center text-danger w-100">Failed to load images.</p>';
             }
         }
-
-
-
-        sermons.forEach(sermon => {
-    container.innerHTML += `
-        <div class="card">
-            <video width="100%" controls>
-                <source src="/uploads/${sermon.video_url}" type="video/mp4">
-            </video>
-            
-            <img src="/uploads/${sermon.image_url}" class="img-fluid">
-            
-            <h3>${sermon.title}</h3>
-        </div>
-    `;
-});
-
         // 2. Handle Button Clicks
         function filterGallery(category, btnElement) {
             // Update UI Active State
@@ -141,5 +135,9 @@
         // Load All on startup
         document.addEventListener('DOMContentLoaded', () => loadGallery('All'));
     </script>
+    <footer class="py-4 bg-navy text-white text-center">
+        <div class="container"><h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3><div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="about.html#leadership">Leadership</a><a href="departments.html">Departments</a><a href="events.html">Events</a><a href="sermons.html">Education</a><a href="about.html#beliefs">Credentials</a><a href="blog.html">News</a><a href="contact.html">Contact</a></div><p class="mb-0 small opacity-75">&copy; 2026 KAG Maridadi Church. All Rights Reserved.</p></div>
+    </footer>
+    <script src="js/site.js"></script>
 </body>
 </html>

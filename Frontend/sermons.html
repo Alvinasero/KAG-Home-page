@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/js/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sermons | KAG Maridadi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="CSS/style.css">
 
     <style>
         :root { --navy: #0a192f; --gold: #d4af37; }
@@ -20,22 +22,26 @@
         .btn-gold { background-color: var(--gold); color: white; border: none; }
         .btn-gold:hover { background-color: #b8962e; color: white; }
     </style>
+    <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
 <body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-navy sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-gold" href="index.html">KAG MARIDADI</a>
+            <a class="navbar-brand fw-bold text-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>KAG MARIDADI</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="sermons.html">Sermons</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#leadership">Leadership</a></li>
+                    <li class="nav-item"><a class="nav-link" href="departments.html">Departments</a></li>
                     <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="sermons.html">Education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html#beliefs">Credentials</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-gold" href="contact.html?topic=giving#contactForm">Give</a></li>
                 </ul>
             </div>
         </div>
@@ -60,6 +66,7 @@
                         <option value="Faith">Faith</option>
                         <option value="Worship">Worship</option>
                         <option value="Leadership">Leadership</option>
+                        <option value="General">General</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -81,13 +88,9 @@
     </section>
 
     <footer class="py-4 bg-navy text-white text-center">
-        <div class="mb-2">
-            <a href="index.html" class="text-white text-decoration-none mx-2 small">Home</a>
-            <a href="sermons.html" class="text-white text-decoration-none mx-2 small">Sermons</a>
-            <a href="events.html" class="text-white text-decoration-none mx-2 small">Events</a>
-            <a href="contact.html" class="text-white text-decoration-none mx-2 small">Contact</a>
-        </div>
-        <p>&copy; 2026 KAG Maridadi Web System</p>
+        <h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3>
+        <div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="about.html#leadership">Leadership</a><a href="departments.html">Departments</a><a href="events.html">Events</a><a href="about.html#beliefs">Credentials</a><a href="gallery.html">Gallery</a><a href="blog.html">News</a><a href="contact.html">Contact</a></div>
+        <p class="mb-0 small opacity-75">&copy; 2026 KAG Maridadi Church. All Rights Reserved.</p>
     </footer>
 
     <script>
@@ -95,10 +98,10 @@
     const container = document.getElementById('sermonContainer');
     
     try {
-        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? 'http://localhost:3000' : '';
+        const baseUrl = window.location.origin;
 
         const response = await fetch(`${baseUrl}/api/sermons`);
+        if (!response.ok) throw new Error('Could not load sermons. Please try again.');
         const sermons = await response.json();
 
         // DEBUG: This shows you exactly what the DB is sending in your browser console (F12)
@@ -107,44 +110,62 @@
 
         container.innerHTML = ''; 
 
-        if (!sermons || sermons.length === 0) {
-            container.innerHTML = '<div class="col-12 text-center text-muted">No sermons found in the archive.</div>';
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const topic = document.getElementById('filterTopic').value.trim().toLowerCase();
+        const filteredSermons = (Array.isArray(sermons) ? sermons : []).filter(sermon =>
+            ((sermon._id && sermon.video_available) || (sermon.image_available && sermon.image_url)) &&
+            (!query || `${sermon.title || ''} ${sermon.speaker || ''}`.toLowerCase().includes(query)) &&
+            (!topic || (sermon.category || '').toLowerCase() === topic)
+        );
+
+        if (filteredSermons.length === 0) {
+            container.innerHTML = '<div class="col-12 text-center text-muted">No sermons with available media found.</div>';
             return;
         }
 
-        sermons.forEach(sermon => {
-            // Use the videoUrl property from the backend
-            const videoPath = sermon.videoUrl ? `${baseUrl}${sermon.videoUrl}` : '';
+        filteredSermons.forEach(sermon => {
+            // The API stores MongoDB's snake_case video_url property.
+            const videoPath = sermon._id && sermon.video_available
+                ? `${baseUrl}/api/sermons/${encodeURIComponent(sermon._id)}/video`
+                : '';
+            const imagePath = sermon.image_available ? sermon.image_url : '';
+            const posterPath = sermon.poster_available ? sermon.poster_url : '';
+            const mediaMarkup = videoPath
+                ? `<video class="sermon-media-video" controls preload="metadata" playsinline poster="${posterPath}" aria-label="Watch ${sermon.title || 'sermon'}"><source src="${videoPath}" type="video/mp4">Your browser does not support video playback.</video>`
+                : imagePath
+                    ? `<img src="${imagePath}" alt="${sermon.title || 'Sermon'}" loading="lazy" decoding="async">`
+                    : '';
+            const downloadPath = sermon._id
+                ? `${baseUrl}/api/sermons/${encodeURIComponent(sermon._id)}/download`
+                : videoPath;
 
             container.innerHTML += `
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm border-0">
-                        <div class="ratio ratio-16x9 bg-dark rounded-top">
-                            <video controls preload="metadata">
-                                <source src="${videoPath}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
+                        <div class="sermon-media">${mediaMarkup}</div>
                         <div class="card-body">
                             <h5 class="fw-bold text-navy">${sermon.title || 'Untitled Message'}</h5>
                             <p class="text-muted small mb-0">By ${sermon.speaker || 'KAG Maridadi'}</p>
                             <hr>
-                            <a href="${videoPath}" download class="btn btn-sm btn-outline-dark w-100">
-                                <i class="fas fa-download me-1"></i> Offline Access
-                            </a>
+                            <div class="d-flex gap-2">
+                                ${videoPath ? `<a href="${videoPath}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark flex-fill">Open Video</a>` : '<span class="text-muted small">Sermon image</span>'}
+                                ${downloadPath && sermon.media_available ? `<a href="${downloadPath}" class="btn btn-sm btn-gold flex-fill"><i class="fas fa-download me-1"></i> Download</a>` : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         });
+        window.addSermonVideoPreviews?.(container);
     } catch (error) {
-        console.error("Fetch Error:", error);
-        container.innerHTML = `<div class="alert alert-danger w-100">Connection error: ${error.message}</div>`;
+        console.error("Sermon loading failed:", error);
+        container.innerHTML = `<div class="alert alert-danger w-100">${error.message}</div>`;
     }
 }
 
 // Run on page load
 document.addEventListener('DOMContentLoaded', loadSermons);
     </script>
+    <script src="js/site.js"></script>
 </body>
 </html>
