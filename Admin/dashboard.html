@@ -187,7 +187,272 @@
                 </div>
             </div>
         </div>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="#" class="nav-link active" onclick="showSection('stats')"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('sermons')"><i class="fas fa-microphone"></i><span>Sermons</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('events')"><i class="fas fa-calendar-alt"></i><span>Calendar Events</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('gallery')"><i class="fas fa-images"></i><span>Gallery</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i><span>Announcements</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('messages')"><i class="fas fa-envelope"></i><span>Prayer Inbox</span></a></li>
+            <hr class="sidebar-divider">
+            <li class="nav-item"><a href="#" class="nav-link text-danger" id="logout"><i class="fas fa-sign-out-alt me-2"></i> <span>Logout</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+        <header class="admin-header d-flex justify-content-between align-items-center shadow-sm">
+            <h5 class="mb-0">Welcome, <span class="fw-bold text-primary">Administrator</span></h5>
+            <div class="header-actions">
+                <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="../Frontend/index.html" class="btn btn-sm btn-outline-dark px-3 rounded-pill">View Website</a>
+            </div>
+        </header>
+
+        <main class="p-4">
+        <!-- Stats Section -->
+        <div id="section-stats">
+            <h3 class="section-title">Dashboard Overview</h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card stat-card bg-grad-sermons p-4">
+                        <h5>Total Sermons</h5>
+                        <h2 id="count-sermons">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card bg-grad-prayers p-4">
+                        <h5>Pending Prayers</h5>
+                        <h2 id="count-prayers">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card bg-grad-announcements p-4">
+                        <h5>Total Announcements</h5>
+                        <h2 id="count-announcements">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sermons Section -->
+        <div id="section-sermons" style="display:none;">
+            <h3 class="section-title">Sermon Management</h3>
+            
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Upload New Sermon</h5>
+                <form id="uploadSermonForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sermon Title</label>
+                            <input type="text" id="title" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Speaker</label>
+                            <input type="text" id="speaker" class="form-control" placeholder="Rev. John Doe">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select MP4 Video</label>
+                        <input type="file" id="videoFile" class="form-control" accept="video/mp4" required>
+                    </div>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary">Upload to Website</button>
+                </form>
+            </div>
+        
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Existing Sermons</h5>
+                <div class="table-responsive">
+                    <table id="sermonTable" class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Speaker</th>
+                                <th>Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sermonTableBody"></tbody>
+                    </table>
+                </div>
     </div>
+</div>
+
+        <!-- Gallery Sections -->
+        <div id="section-gallery" style="display:none;">
+            <h3 class="section-title">Gallery Management</h3>
+            
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Upload New Photo</h5>
+                <form id="galleryForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Caption</label>
+                            <input type="text" id="gCaption" class="form-control" placeholder="e.g. Sunday Worship" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Category</label>
+                            <select id="gCategory" class="form-select">
+                                <option value="Worship">Worship</option>
+                                <option value="Outreach">Outreach</option>
+                                <option value="Youth">Youth</option>
+                                <option value="General">General</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Image</label>
+                        <input type="file" id="gFile" class="form-control" accept="image/*" required>
+                    </div>
+                    <button type="submit" id="gUploadBtn" class="btn btn-primary">Add to Gallery</button>
+                </form>
+            </div>
+        
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Current Gallery Items</h5>
+                <div class="table-responsive">
+                    <table id="galleryTable" class="table table-hover align-middle">
+                        <thead>
+                            <tr><th>Image</th><th>Caption</th><th>Category</th><th class="text-end">Actions</th></tr>
+                        </thead>
+                        <tbody id="galleryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div id="section-events" style="display:none;">
+            <h3 class="section-title">Church Calendar / Events</h3>
+            
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Add New Event</h5>
+                <form id="eventForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Event Title</label>
+                            <input type="text" id="eventTitle" class="form-control" placeholder="e.g. Annual General Meeting" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" id="eventLocation" class="form-control" placeholder="Main Sanctuary / Online" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="eventDate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Time</label>
+                            <input type="text" id="eventTime" class="form-control" placeholder="10:00 AM - 1:00 PM" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea id="eventDesc" class="form-control" rows="2" placeholder="Brief details about the event" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Event Poster (Optional)</label>
+                        <input type="file" id="eventPoster" class="form-control" accept="image/*">
+                    </div>
+                    <button type="submit" id="eventSubmitBtn" class="btn btn-primary">Add to Calendar</button>
+                </form>
+            </div>
+        
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Scheduled Events</h5>
+                <div id="eventTableContainer" class="table-responsive">
+                    <table id="eventTable" class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Date/Time</th>
+                                <th>Location</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Section -->
+        <div id="section-announcements" style="display:none;">
+            <h3 class="section-title">Manage Wall Announcements</h3>
+            <div class="card p-4 mb-4 shadow-sm border-0">
+                <h5>Create New Announcement</h5>
+                <form id="announcementForm">
+                    <div class="mb-3">
+                        <label class="form-label">Headline/Title</label>
+                        <input type="text" id="annTitle" class="form-control" placeholder="e.g. Sunday Service Time Change" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date of Event/Announcement</label>
+                        <input type="date" id="annDate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Full Details</label>
+                        <textarea id="annDesc" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post to Wall</button>
+                </form>
+            </div>
+            <div class="card p-4 shadow-sm border-0">
+                <h5>Active Announcements</h5>
+                <div class="table-responsive">
+                    <table id="announcementTable" class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="announcementTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Section -->
+        <div id="section-messages" style="display:none;">
+            <h3 class="section-title">Communication Inbox</h3>
+            
+            <div class="card p-4 shadow-sm border-0">
+                <h5>General Inquiries</h5>
+                <div class="table-responsive">
+                    <table id="messageTable" class="table table-hover mb-5">
+                        <thead>
+                            <tr><th>Date</th><th>From</th><th>Subject</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="messageTableBody"></tbody>
+                    </table>
+                </div>
+
+                <h5 class="mt-4">Prayer Requests</h5>
+                <div class="table-responsive">
+                    <table id="prayerTable" class="table table-hover">
+                        <thead>
+                            <tr><th>Date</th><th>Member</th><th>Request</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="prayerTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </main>
+    </div> <!-- /#content -->
+</div> <!-- /.wrapper -->
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         const baseUrl = window.location.origin;
@@ -359,7 +624,239 @@
             try {
                 const response = await fetch(`${baseUrl}/api/admin/upload`, {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        caption: document.getElementById('gCaption').value,
+                        category: document.getElementById('gCategory').value,
+                        image_path: cloudinaryUpload.secure_url
+                    })
+                });
+
+                btn.disabled = false;
+                btn.innerText = 'Add to Gallery';
+
+                if (res.ok) {
+                    alert("Photo added to gallery!");
+                    document.getElementById('galleryForm').reset();
+                    loadGalleryAdmin();
+                } else {
+                    const errorData = await parseResponseBody(res);
+                    const message = getResponseErrorMessage(errorData, 'Check server logs');
+                    if (res.status === 401 || res.status === 403) {
+                        redirectToLogin();
+                        return;
+                    }
+                    alert(`Upload failed: ${message}`);
+                }
+            } catch (err) {
+                console.error("Gallery upload connection error:", err);
+                alert("Could not connect to the server. Is the backend running?");
+                btn.disabled = false;
+                btn.innerText = 'Add to Gallery';
+            }
+        };
+
+        async function loadEventsAdmin() {
+            prepareTable('#eventTable');
+            const events = await fetchJson(`${baseUrl}/api/events`);
+            const tbody = document.getElementById('eventTableBody');
+            
+            tbody.innerHTML = events.map(e => `
+                <tr>
+                    <td><div class="fw-bold">${e.title}</div><div class="small text-muted">${e.description}</div></td>
+                    <td><i class="far fa-calendar me-1"></i> ${new Date(e.event_date).toLocaleDateString()}<br><i class="far fa-clock me-1 text-gold"></i> ${e.event_time}</td>
+                    <td><i class="fas fa-map-marker-alt me-1 text-danger"></i> ${e.location}</td>
+                    <td class="text-end">
+                        <button onclick="deleteEvent('${e._id || e.id}')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            initTable('#eventTable');
+        }
+
+        async function deleteEvent(id) {
+            if (!confirm("Delete this event?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/events/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                loadEventsAdmin();
+                loadStats(); // Update dashboard stats
+            }
+        }
+
+        document.getElementById('eventForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('eventSubmitBtn');
+            const posterFile = document.getElementById('eventPoster').files[0];
+
+            try {
+                btn.disabled = true;
+
+                let imagePosterUrl = '';
+                if (posterFile) {
+                    btn.innerText = 'Compressing poster...';
+                    const cloudinaryUpload = await uploadImageDirectToCloudinary(posterFile, (percent) => {
+                        btn.innerText = `Uploading poster ${percent}%`;
+                    });
+                    imagePosterUrl = cloudinaryUpload.secure_url;
+                }
+
+                btn.innerText = 'Saving event...';
+
+                const res = await fetch(`${baseUrl}/api/admin/events/direct`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        title: document.getElementById('eventTitle').value,
+                        location: document.getElementById('eventLocation').value,
+                        event_date: document.getElementById('eventDate').value,
+                        event_time: document.getElementById('eventTime').value,
+                        description: document.getElementById('eventDesc').value,
+                        image_poster: imagePosterUrl
+                    })
+                });
+
+                if (res.ok) {
+                    alert("Event added to calendar!");
+                    document.getElementById('eventForm').reset();
+                    loadEventsAdmin();
+                } else {
+                    const errorData = await parseResponseBody(res);
+                    const message = getResponseErrorMessage(errorData, 'Event creation failed');
+                    if (res.status === 401 || res.status === 403) {
+                        redirectToLogin();
+                        return;
+                    }
+                    alert("Event creation failed: " + message);
+                }
+            } catch (err) {
+                console.error("Event creation connection error:", err);
+                alert(`Event creation failed: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Add to Calendar';
+            }
+        };
+
+        async function deleteAnnouncement(id) {
+            if (!confirm("Delete this announcement?")) return;
+            try {
+                const res = await fetch(`${baseUrl}/api/admin/announcements/${id}`, { 
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    loadAnnouncementsAdmin();
+                    loadStats();
+                } else {
+                    const errorText = await res.text();
+                    alert('Failed to delete: ' + errorText);
+                }
+            } catch (e) { alert("Connection to backend failed."); }
+        }
+
+        document.getElementById('announcementForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('annTitle').value;
+            const date = document.getElementById('annDate').value;
+            const description = document.getElementById('annDesc').value;
+
+            const res = await fetch(`${baseUrl}/api/admin/announcements`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
+                body: JSON.stringify({ title, date, description })
+            });
+
+            if (res.ok) {
+                alert("Announcement posted successfully!");
+                document.getElementById('announcementForm').reset();
+                loadAnnouncementsAdmin();
+                loadStats();
+            } else { //
+                const errorText = await res.text();
+                console.error('Failed to post announcement:', errorText); //
+                alert("Failed to post announcement. Make sure the backend is running and you are authorized."); //
+            }
+        };
+
+        async function loadPrayers() {
+            prepareTable('#prayerTable');
+            const prayers = await fetchJson(`${baseUrl}/api/admin/prayers`, { headers: getAuthHeaders() });
+            const tbody = document.getElementById('prayerTableBody');
+            
+            tbody.innerHTML = prayers.map(p => `
+                <tr>
+                    <td><span class="text-muted small">${new Date(p.created_at).toLocaleDateString()}</span></td>
+                    <td>${p.member_name}</td>
+                    <td><div style="max-width:300px" class="small italic">"${p.message}"</div></td>
+                    <td><span class="badge rounded-pill ${p.status === 'Pending' ? 'bg-warning text-dark' : 'bg-success'}">${p.status}</span></td>
+                    <td>
+                        ${p.status === 'Pending' ? `<button onclick="markPrayed('${p._id || p.id}')" class="btn btn-sm btn-success">Mark Prayed</button>` : '✅'}
+                        <button onclick="deletePrayer('${p._id || p.id}')" class="btn btn-sm btn-outline-danger ms-1"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            initTable('#prayerTable');
+        }
+
+        async function deletePrayer(id) {
+            if (!confirm("Delete this prayer request?")) return;
+            const res = await fetch(`${baseUrl}/api/admin/prayers/${id}`, { 
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                loadPrayers();
+                loadStats(); // Update dashboard stats
+            }
+        }
+
+        document.getElementById('uploadSermonForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('uploadBtn');
+            const title = document.getElementById('title').value;
+            const speaker = document.getElementById('speaker').value;
+            const videoFile = document.getElementById('videoFile').files[0];
+
+            if (!videoFile) {
+                alert('Please choose a video file first.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Preparing upload...';
+
+            try {
+                const cloudinaryUpload = await uploadVideoDirectToCloudinary(videoFile, (percent) => {
+                    btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Uploading ${percent}%`;
+                });
+
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving sermon...';
+
+                const response = await fetch(`${baseUrl}/api/admin/sermons/direct`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        title,
+                        speaker,
+                        video_url: cloudinaryUpload.secure_url
+                    })
                 });
 
                 if (response.ok) {
@@ -371,8 +868,11 @@
                     alert(result.message || "Upload failed. Make sure the backend is running.");
                 }
             } catch (err) {
-                console.error("Upload error:", err);
-                alert("Could not connect to backend server.");
+                console.error("Sermon upload error:", err);
+                alert("Connection failed. The video might be too large for the server limits.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Upload to Website';
             }
         };
 

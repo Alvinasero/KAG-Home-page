@@ -10,23 +10,15 @@
     <link rel="stylesheet" href="CSS/style.css">
 
     <style>
-        :root { --navy: #0a192f; --gold: #d4af37; }
-        .bg-navy { background-color: var(--navy); }
-        .text-gold { color: var(--gold); }
-        .sermon-card { 
-            transition: 0.3s; 
-            border: none; 
-            border-bottom: 4px solid var(--gold); 
+        .page-hero {
+            background-image: linear-gradient(rgba(10, 25, 47, 0.25), rgba(10, 25, 47, 0.25)),
+                url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=1600&q=80');
         }
-        .sermon-card:hover { transform: translateY(-5px); shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .btn-gold { background-color: var(--gold); color: white; border: none; }
-        .btn-gold:hover { background-color: #b8962e; color: white; }
     </style>
     <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
-<body class="bg-light">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-navy sticky-top">
+<body class="page-shell">
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>KAG MARIDADI</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -47,10 +39,11 @@
         </div>
     </nav>
 
-    <header class="py-5 bg-navy text-white text-center">
+    <header class="page-hero">
         <div class="container">
-            <h1 class="display-4 fw-bold">Word & <span class="text-gold">Revelation</span></h1>
-            <p class="lead">Feeding your spirit with the undiluted Word of God.</p>
+            <span class="eyebrow">Sermon Archive</span>
+            <h1 class="hero-title">Word and revelation for every week.</h1>
+            <p class="hero-copy">The archive now uses larger touch targets, tighter mobile spacing, and one-column stacking on smaller Android devices.</p>
         </div>
     </header>
 
@@ -78,10 +71,24 @@
 
     <section class="py-5">
         <div class="container">
-            <div class="row g-4" id="sermonContainer">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-warning" role="status"></div>
-                    <p>Fetching latest sermons...</p>
+            <div class="surface-card">
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-bold">Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by title or speaker">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label fw-bold">Topic</label>
+                        <select id="filterTopic" class="form-select">
+                            <option value="">All Topics</option>
+                            <option value="Faith">Faith</option>
+                            <option value="Worship">Worship</option>
+                            <option value="Leadership">Leadership</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <button class="btn btn-gold w-100" onclick="loadSermons()">Search</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,8 +170,65 @@
     }
 }
 
-// Run on page load
-document.addEventListener('DOMContentLoaded', loadSermons);
+            try {
+                const baseUrl = getApiBaseUrl();
+
+                const response = await fetch(`${baseUrl}/api/sermons?t=${Date.now()}`, { cache: 'no-store' });
+                const sermons = await response.json();
+                const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+                const topic = document.getElementById('filterTopic').value.trim().toLowerCase();
+
+                const filtered = (sermons || []).filter((sermon) => {
+                    const title = (sermon.title || '').toLowerCase();
+                    const speaker = (sermon.speaker || '').toLowerCase();
+                    const description = (sermon.description || '').toLowerCase();
+                    const category = (sermon.category || '').toLowerCase();
+                    const matchesSearch = !searchTerm || title.includes(searchTerm) || speaker.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesTopic = !topic || category === topic;
+                    return matchesSearch && matchesTopic;
+                });
+
+                container.innerHTML = '';
+
+                if (!filtered.length) {
+                    container.innerHTML = '<div class="col-12 empty-state">No sermons matched your search.</div>';
+                    return;
+                }
+
+                filtered.forEach((sermon) => {
+                    const videoPath = resolveMediaUrl(sermon.video_url, baseUrl);
+                    const description = sermon.description ? `${sermon.description.substring(0, 110)}...` : 'No description available.';
+
+                    container.innerHTML += `
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card kag-card h-100">
+                                <div class="ratio ratio-16x9 bg-dark rounded-top overflow-hidden">
+                                    <video controls preload="metadata">
+                                        <source src="${videoPath}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold text-navy">${sermon.title || 'Untitled Message'}</h5>
+                                    <p class="text-muted small mb-2">By ${sermon.speaker || 'KAG Maridadi'}</p>
+                                    <p class="card-text small text-secondary">${description}</p>
+                                    <a href="${videoPath}" target="_blank" rel="noopener" class="btn btn-gold w-100 mt-2">
+                                        <i class="fas fa-play me-2"></i>Watch Now
+                                    </a>
+                                    <a href="${videoPath}" download class="btn btn-outline-dark w-100 mt-2">
+                                        <i class="fas fa-download me-2"></i>Offline Access
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                container.innerHTML = `<div class="col-12"><div class="alert alert-danger">Connection error: ${error.message}</div></div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSermons);
     </script>
     <script src="js/site.js"></script>
 </body>

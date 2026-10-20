@@ -22,9 +22,8 @@
     </style>
     <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
-<body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-navy sticky-top">
+<body class="page-shell">
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>KAG MARIDADI</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -45,10 +44,11 @@
         </div>
     </nav>
 
-    <header class="py-5 bg-navy text-white text-center">
+    <header class="page-hero">
         <div class="container">
-            <h1 class="display-4 fw-bold">Contact <span class="text-gold">Us</span></h1>
-            <p class="lead">We would love to hear from you. Reach out for prayers, inquiries, or visits.</p>
+            <span class="eyebrow">Reach Out</span>
+            <h1 class="hero-title">Contact the church and send your prayer requests.</h1>
+            <p class="hero-copy">This page had the biggest structural issue. The prayer request card is now back inside the page flow, and both forms stack correctly on Android.</p>
         </div>
     </header>
 
@@ -109,63 +109,60 @@
 
     <section class="py-5">
         <div class="container">
-            <div class="row g-5">
+            <div class="row g-4">
                 <div class="col-lg-7">
-                    <div class="card p-4 shadow-sm border-0 rounded-4">
-                        <h3 class="mb-4 text-navy fw-bold">Send a Message</h3>
-                        <form id="contactForm">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Full Name</label>
-                                    <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+                    <div class="surface-card h-100">
+                        <h3 class="text-navy fw-bold mb-3"><i class="fas fa-hands-praying me-2 text-gold"></i>Submit prayer request</h3>
+                        <form id="prayerForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="text" id="pName" class="form-control" placeholder="Your name (optional)">
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Email Address</label>
-                                    <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+                                <div class="col-md-6">
+                                    <input type="text" id="pPhone" class="form-control" placeholder="Phone number">
+                                </div>
+                                <div class="col-12">
+                                    <select id="pType" class="form-select">
+                                        <option value="Private">Keep this private (Pastor only)</option>
+                                        <option value="Public">Share with intercessory team</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <textarea id="pMessage" class="form-control" rows="4" placeholder="How can we pray for you?" required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-gold w-100">Send Request</button>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Subject</label>
-                                <input type="text" id="subject" class="form-control" placeholder="Prayer Request / Inquiry" required>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Your Message</label>
-                                <textarea id="message" class="form-control" rows="5" placeholder="How can we help you?" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-gold w-100">Send Message Now</button>
                         </form>
-                        <div id="responseMessage" class="mt-3"></div>
                     </div>
                 </div>
 
                 <div class="col-lg-5">
                     <div class="row g-4">
                         <div class="col-12">
-                            <div class="card contact-info-card p-4 shadow-sm">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box me-3"><i class="fas fa-location-dot"></i></div>
+                            <div class="surface-card">
+                                <h4 class="fw-bold text-navy mb-4">Church contact</h4>
+                                <div class="d-flex align-items-start gap-3 mb-4">
+                                    <div class="text-gold fs-4"><i class="fas fa-location-dot"></i></div>
                                     <div>
-                                        <h5 class="mb-0 fw-bold">Our Location</h5>
+                                        <h6 class="fw-bold mb-1">Our location</h6>
                                         <p class="text-muted mb-0">Maridadi Estate, Nairobi, Kenya</p>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="card contact-info-card p-4 shadow-sm">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box me-3"><i class="fas fa-phone"></i></div>
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="text-gold fs-4"><i class="fas fa-phone"></i></div>
                                     <div>
-                                        <h5 class="mb-0 fw-bold">Call Us</h5>
-                                        <p class="text-muted mb-0">+254 700 123 456</p>
+                                        <h6 class="fw-bold mb-1">Call us</h6>
+                                        <p class="text-muted mb-0">+254 702162619 or +254 769240658</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="map-container">
-                                <iframe 
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.162440124237!2d36.8172!3d-1.2864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMTcnMTEuMCJTIDM2wrA0OScwMS45IkU!5e0!3m2!1sen!2ske!4v1647432000000!5m2!1sen!2ske" 
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.162440124237!2d36.8172!3d-1.2864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMTcnMTEuMCJTIDM2wrA0OScwMS45IkU!5e0!3m2!1sen!2ske!4v1647432000000!5m2!1sen!2ske"
                                     width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
                                 </iframe>
                             </div>
@@ -183,6 +180,30 @@
     </footer>
 
     <script>
+        document.getElementById('prayerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000' : '';
+
+            const data = {
+                name: document.getElementById('pName').value,
+                phone: document.getElementById('pPhone').value,
+                type: document.getElementById('pType').value,
+                message: document.getElementById('pMessage').value
+            };
+
+            const res = await fetch(`${baseUrl}/api/prayer-request`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert('Received. We are standing with you in faith!');
+                document.getElementById('prayerForm').reset();
+            }
+        });
+
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             

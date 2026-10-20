@@ -1,4 +1,15 @@
 // app.js
+function getApiBaseUrl() {
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'https://kag-website.onrender.com'
+        : '';
+}
+
+function resolveMediaUrl(url, baseUrl = getApiBaseUrl()) {
+    if (!url) return '#';
+    return url.startsWith('http') ? url : `${baseUrl}${url}`;
+}
+
 async function loadSermons() {
     const container = document.getElementById('sermon-list');
     if (!container) return;

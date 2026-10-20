@@ -9,13 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="CSS/style.css">
     <style>
-        /* Hero Mini Section */
         .about-header {
-            background: linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.85)), 
-                        url('https://images.unsplash.com/photo-1478147427282-58a87a120781?auto=format&fit=crop&w=1350&q=80') center/cover;
-            padding: 100px 0;
-            color: white;
-            text-align: center;
+            background-image: linear-gradient(rgba(10, 25, 47, 0.2), rgba(10, 25, 47, 0.2)),
+                url('https://images.unsplash.com/photo-1478147427282-58a87a120781?auto=format&fit=crop&w=1600&q=80');
         }
 
         /* Vision & Mission Cards */
@@ -50,9 +46,8 @@
     </style>
     <link rel="icon" type="image/svg+xml" href="/assets/kag-maridadi-logo.svg">
 </head>
-<body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-maridadi-navy sticky-top border-bottom border-warning">
+<body class="page-shell">
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-maridadi-gold" href="index.html"><img class="site-logo" src="/assets/kag-maridadi-logo.svg" alt=""><span class="brand-copy"><span>KAG MARIDADI</span><small class="brand-tagline">EST. 1972 · MARIDADI</small></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -76,53 +71,54 @@
 
     <header class="about-header">
         <div class="container">
-            <h1 class="display-3 fw-bold">Our <span class="text-maridadi-gold">Story</span></h1>
-            <p class="lead">Built on Faith, Growing in Grace, Serving with Excellence.</p>
+            <span class="eyebrow">Our Story</span>
+            <h1 class="hero-title">Built on faith, growing in grace, serving with purpose.</h1>
+            <p class="hero-copy">This page now uses the same responsive system as the rest of the site so the story, values, and leadership blocks stack cleanly on Android devices.</p>
         </div>
     </header>
 
     <section class="py-5" id="beliefs">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h2 class="fw-bold text-maridadi-navy mb-4 border-bottom border-warning d-inline-block">Who We Are</h2>
-                    <p class="text-muted lead">Founded in the heart of Maridadi, KAG Maridadi Church began as a small prayer fellowship with a big vision. Over the years, we have grown into a vibrant community of believers dedicated to the Great Commission.</p>
-                    <p class="text-muted">Our church is a member of the Kenya Assemblies of God (KAG), following the Pentecostal tradition and emphasizing the power of the Holy Spirit in everyday life. We believe in practical Christianity that transforms families and the community.</p>
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <div class="surface-card h-100">
+                        <div class="section-heading mb-3">
+                            <h2>Who we are</h2>
+                        </div>
+                        <p class="text-muted">Founded in the heart of Maridadi, KAG Maridadi Church began as a small prayer fellowship with a big vision. Over time, it has grown into a vibrant body of believers committed to discipleship, prayer, evangelism, and practical service.</p>
+                        <p class="text-muted mb-0">As part of the Kenya Assemblies of God family, the church stands in the Pentecostal tradition and emphasizes Spirit-led worship, biblical teaching, and transformed daily living.</p>
+                    </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="p-4 bg-light rounded-4 border-start border-warning border-5 shadow-sm">
-                        <h4 class="fw-bold text-maridadi-navy">Our Core Values</h4>
-                        <ul class="list-unstyled mt-3">
-                            <li class="mb-2"><i class="fas fa-check text-maridadi-gold me-2"></i> Biblical Integrity</li>
-                            <li class="mb-2"><i class="fas fa-check text-maridadi-gold me-2"></i> Passionate Worship</li>
-                            <li class="mb-2"><i class="fas fa-check text-maridadi-gold me-2"></i> Covenant Community</li>
-                            <li class="mb-2"><i class="fas fa-check text-maridadi-gold me-2"></i> Servant Leadership</li>
-                        </ul>
+                <div class="col-lg-5">
+                    <div class="surface-card h-100">
+                        <h3 class="fw-bold text-navy mb-3">Core values</h3>
+                        <div class="d-grid gap-3">
+                            <div><i class="fas fa-check text-gold me-2"></i>Biblical integrity</div>
+                            <div><i class="fas fa-check text-gold me-2"></i>Passionate worship</div>
+                            <div><i class="fas fa-check text-gold me-2"></i>Covenant community</div>
+                            <div><i class="fas fa-check text-gold me-2"></i>Servant leadership</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-5 bg-light">
-        <div class="container text-center">
+    <section class="section-space pt-0">
+        <div class="container">
             <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="card vm-card p-4 shadow-sm">
-                        <div class="card-body">
-                            <i class="fas fa-eye fa-3x text-maridadi-gold mb-3"></i>
-                            <h3 class="fw-bold text-maridadi-navy">Our Vision</h3>
-                            <p class="text-muted">To be a Christ-centered church that impacts the world through the gospel, raising disciples who walk in the fullness of God's purpose and power.</p>
-                        </div>
+                    <div class="card vm-card p-4">
+                        <i class="fas fa-eye fa-2x text-gold mb-3"></i>
+                        <h3 class="fw-bold text-navy">Our vision</h3>
+                        <p class="text-muted mb-0">To be a Christ-centered church that impacts the world through the gospel, raising disciples who walk in the fullness of God's purpose and power.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card vm-card p-4 shadow-sm">
-                        <div class="card-body">
-                            <i class="fas fa-bullseye fa-3x text-maridadi-gold mb-3"></i>
-                            <h3 class="fw-bold text-maridadi-navy">Our Mission</h3>
-                            <p class="text-muted">To provide an atmosphere for true worship, equip the saints for ministry, and reach out to the lost with the love of Jesus Christ.</p>
-                        </div>
+                    <div class="card vm-card p-4">
+                        <i class="fas fa-bullseye fa-2x text-gold mb-3"></i>
+                        <h3 class="fw-bold text-navy">Our mission</h3>
+                        <p class="text-muted mb-0">To provide an atmosphere for true worship, equip believers for ministry, and reach the lost with the love of Jesus Christ.</p>
                     </div>
                 </div>
             </div>
@@ -143,7 +139,7 @@
         </div>
     </section>
 
-    <footer class="bg-maridadi-navy text-white py-4 text-center">
+    <footer class="site-footer text-center">
         <div class="container">
             <h3 class="text-gold fw-bold mb-3">KAG MARIDADI</h3>
             <div class="footer-links"><a href="index.html">Home</a><a href="about.html#leadership">Leadership</a><a href="departments.html">Departments</a><a href="events.html">Events</a><a href="sermons.html">Education</a><a href="about.html#beliefs">Credentials</a><a href="gallery.html">Gallery</a><a href="blog.html">News</a><a href="contact.html">Contact</a></div>

@@ -44,7 +44,7 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-5 col-lg-4">
+            <div class="col-12 col-sm-10 col-md-7 col-lg-5">
                 <div class="text-center mb-4">
                     <img class="portal-logo" src="/assets/kag-maridadi-logo.svg" alt="KAG Maridadi crest"><h2 class="portal-brand">KAG MARIDADI</h2>
                     <p class="portal-brand-subtitle small">Member Portal</p>
@@ -59,7 +59,11 @@
                             </div>
                             <div class="mb-4">
                                 <label for="password" class="form-label small fw-bold">Password</label>
-                                <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+                                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                            </div>
+                            <button type="submit" class="btn btn-gold w-100">Sign In</button>
+                            <div class="mt-3 text-center">
+                                <a href="#" onclick="alert('Please contact the church office to reset your portal password.')" class="small text-decoration-none text-muted">Forgot Password?</a>
                             </div>
                             <button type="submit" class="btn btn-gold w-100 py-2">Sign In</button>
                             <div class="mt-3 text-center">
@@ -88,7 +92,7 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const username = document.getElementById('email').value; // Backend expects username
+            const username = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             const baseUrl = window.location.origin;
@@ -103,26 +107,16 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    // 1. Save Token to Local Storage
                     localStorage.setItem('kag_token', result.token);
                     localStorage.setItem('kag_role', result.role);
-
-                    // 2. Redirect based on role
-                    if (result.role === 'Admin') {
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
+                    window.location.href = result.role === 'Admin' ? 'dashboard.html' : 'index.html';
                 } else {
-                    // Show error message
-                    alert(result.message || "Invalid Login Details");
+                    alert(result.message || 'Invalid login details');
                 }
             } catch (error) {
-                console.error("Login Error:", error);
-                alert("Connection to server failed. Ensure your Node.js backend is running.");
+                alert('Connection to server failed. Ensure your Node.js backend is running.');
             }
         });
-
     </script>
 </body>
 </html>
